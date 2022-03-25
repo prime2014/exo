@@ -1,0 +1,73 @@
+version: "3"
+
+volumes:
+  local_db: {}
+
+services:
+  postgres:
+    restart: on-failure
+    image: postgres:12
+    container_name: exo_local_postgres
+    env_file:
+      - ./.env
+    volumes:
+      - local_db:/var/lib/postgresql/data
+    networks:
+      - exo-net
+
+  django: &django
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./utils/django/Dockerfile
+    image: exo_django_image
+    container_name: exo_local_django
+    volumes:
+      - .:/exo
+    env_file:
+      - ./.env
+    command: >
+      /bin/bash -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - exo-net
+
+  redis:
+    image: redis:alpine
+    container_name: exo_local_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - exo-net
+
+  celery:
+    <<: *django
+    image: celery-exo-image
+    restart: always
+    container_name: exo_local_celery
+    ports: []
+    command: >
+      /bin/bash -c "celery -A config.celery_app worker -l DEBUG
+             celery -A config.celery_app beat -l INFO"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - exo-net
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: exo_local_mailhog
+    ports:
+      - "1025:1025"  # SMTP Server
+      - "8025:8025"  # Browsable view of mailhog UI
+    restart: unless-stopped
+    networks:
+      - exo-net
+
+networks:
+  exo-net:
+    driver: bridge

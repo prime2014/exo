@@ -1,0 +1,27 @@
+version = 1
+
+exclude_patterns = [
+    "**/node_modules",
+    "js/**/*.min.js",
+    "**/__pycache__/",
+    ".idea",
+    "venv",
+    "*.pyc",
+    "migrations",
+]
+
+test_patterns = [
+    "./apps/**/__tests__*"
+]
+
+[[analyzers]]
+name = "python"
+enabled = true
+dependency_file_paths = [
+    "requirements.txt"
+]
+
+[[transformers]]
+name = "prettier"
+enabled = true
+

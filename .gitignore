@@ -1,0 +1,10 @@
+.dockerignore
+node_modules/
+__pycache__/
+pytest.cache/
+venv
+.env
+.env.development
+.env.production
+
+.idea

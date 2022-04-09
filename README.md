@@ -21,7 +21,6 @@ and [docker](https://docker.com) for packaging and shipping the application
 
 
 ## Requirements
----
 The project requires a host of tools.
 Ensure that before you begin you've cloned the project by running
 ```
@@ -34,7 +33,6 @@ installation for ubuntu [ubuntu installation](https://docs.docker.com/desktop/ub
 You must have ***python*** installed in your system and ***node*** as well
 
 ## File Structure
----
 ```
 ├───.github
 ├───apps
@@ -55,7 +53,6 @@ You must have ***python*** installed in your system and ***node*** as well
 ```
 
 ## Building the project with docker
----
 To build the project, navigate to the project directory and run the following command:
 - For windows
 ```
@@ -68,7 +65,6 @@ To build the project, navigate to the project directory and run the following co
 The command should build the project installing all the dependencies it needs.
 
 ## Starting the project
----
 After the project has been built, it should automatically start on its own.
 However on subsequent use of the project, run the following command
 ```
@@ -76,6 +72,5 @@ However on subsequent use of the project, run the following command
 ```
 
 ## Stopping the project
----
 To stop the project just press `CTRL + C` on the terminal once.
 

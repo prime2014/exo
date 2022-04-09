@@ -49,7 +49,7 @@ python-crontab==2.6.0
 python-dateutil==2.8.2
 python-magic==0.4.25
 pytz==2022.1
-redis==4.1.4
+redis==4.2.2
 service-identity==21.1.0
 six==1.16.0
 sqlparse==0.4.2

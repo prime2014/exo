@@ -24,12 +24,7 @@ django-environ==0.8.1
 django-model-utils==4.2.0
 django-notifications-hq==1.7.0
 django-notifications-rest==0.0.1
-<<<<<<< HEAD
-django-redis==5.2.0
-django-timezone-field==4.2.3
-=======
 django-timezone-field==5.0
->>>>>>> cc8f8934b9b7380710e17f7050ef35021e08be1c
 django-versatileimagefield==2.2
 djangorestframework==3.13.1
 hiredis==2.0.0

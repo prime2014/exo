@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+import socket
 
 DEBUG = True
 
@@ -58,7 +59,8 @@ INSTALLED_APPS += [
     "django_celery_results",
     "versatileimagefield",
     "notifications",
-    "notifications_rest"
+    "notifications_rest",
+    "debug_toolbar"
 ]
 
 
@@ -69,6 +71,7 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -234,13 +237,47 @@ EMAIL_PORT = 1025
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose':{
+            'format': '{levelname} {module} {process:d} {thread:d} {message}',
+            'style': '{'
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
     'handlers':{
         'console':{
-            'class': 'logging.StreamHandler'
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'filters':['require_debug_true']
         }
     },
     'root': {
         'handlers':['console'],
         'level': 'DEBUG'
+    }
+}
+
+INTERNAL_IPS = [
+    'localhost',
+    '127.0.0.1'
+]
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + INTERNAL_IPS
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+        'LOCATION': 'memcached:11211',
     }
 }

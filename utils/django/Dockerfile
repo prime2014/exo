@@ -12,6 +12,10 @@ RUN apt-get update \
   && apt-get install -y libpq-dev \
   # Translations dependencies
   && apt-get install -y gettext \
+  # Memcached installation
+  && apt-get install -y libmemcached-dev \
+  # libmemcache setup
+  && apt-get install -y zlib1g-dev \
   # versatileimage dependencies
   && apt-get install -y libmagic-dev \
   # postgres client install
@@ -28,8 +32,6 @@ RUN python -m pip install --upgrade pip  \
 
 
 COPY --chown=1000:1000 . /exo/
-
-RUN chmod 0700 entrypoint.sh
 
 
 ENTRYPOINT [ "./entrypoint.sh" ]

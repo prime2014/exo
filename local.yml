@@ -58,6 +58,15 @@ services:
     networks:
       - exo-net
 
+  memcached:
+    restart: unless-stopped
+    image: memcached
+    container_name: exo_local_memcache
+    ports:
+      - "11211:11211"
+    networks:
+      - exo-net
+
   mailhog:
     image: mailhog/mailhog
     container_name: exo_local_mailhog

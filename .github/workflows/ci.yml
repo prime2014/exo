@@ -1,0 +1,27 @@
+# for more information check out the documentation here:
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: Testing and Linting workflows
+
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull-request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    name: flake8
+    defaults:
+      shell: bash
+      working-directory: exo
+    steps:
+      run: |
+        flake8 --max-complexity=10
+

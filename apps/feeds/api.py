@@ -8,10 +8,11 @@ import logging
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.response import Response
 
+
 logger = logging.getLogger(__name__)
 
 class FeedViewset(ModelViewSet):
-    queryset = Feed.objects.all()
+    queryset = Feed.objects.all().select_related("author")
     serializer_class = FeedSerializer
     authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated, )
@@ -23,7 +24,7 @@ class FeedViewset(ModelViewSet):
         elif self.request.user.is_authenticated:
             friends = list(self.request.user.relation.filter(to_user__status='Friends'))
             logger.info(friends)
-            qs = Feed.objects.filter(author__in=[self.request.user, *friends])
+            qs = Feed.objects.select_related("author").filter(author__in=[self.request.user, *friends])
             return qs
         raise NotAuthenticated(detail="You need to be authenticated to view the feed", code=401)
 

@@ -2,7 +2,7 @@ from distutils.command.upload import upload
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.db.models import Q, F
 from versatileimagefield.fields import VersatileImageField,PPOIField
 
@@ -12,6 +12,7 @@ class UserManager(BaseUserManager):
             email=email,
             username=extra_kwargs['username'],
             is_active=is_active,
+            avatar=extra_kwargs['avatar'],
             first_name=extra_kwargs["first_name"],
             last_name=extra_kwargs['last_name'],
             is_staff=extra_kwargs['is_staff'],

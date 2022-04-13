@@ -60,7 +60,8 @@ INSTALLED_APPS += [
     "versatileimagefield",
     "notifications",
     "notifications_rest",
-    "debug_toolbar"
+    "debug_toolbar",
+    "drf_yasg"
 ]
 
 
@@ -265,6 +266,7 @@ LOGGING = {
         'level': 'DEBUG'
     }
 }
+
 
 INTERNAL_IPS = [
     'localhost',

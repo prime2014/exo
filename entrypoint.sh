@@ -6,7 +6,6 @@
 load="true"
 
 
-
 check_database(){
 
     while [ "$load" == "true" ]

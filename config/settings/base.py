@@ -33,7 +33,7 @@ APPS_DIR = BASE_DIR / "apps"
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY", default="u6t(n6nx(+172pn#jf92-n_69vw6t8w=4e!#brt_g&zxkm+-5k")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -226,7 +226,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication"
     ],
     "DEFAULT PERMISSION_CLASSES": [
-        "rest-framework.permissions.IsAuthenticated"
+        "rest_framework.permissions.IsAuthenticated"
     ]
 }
 

@@ -14,7 +14,6 @@ services:
       - local_db:/var/lib/postgresql/data
     networks:
       - exo-net
-
   django: &django
     restart: on-failure
     build:

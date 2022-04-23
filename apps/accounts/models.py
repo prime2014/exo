@@ -1,4 +1,5 @@
 from distutils.command.upload import upload
+from statistics import mode
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.utils import timezone
@@ -10,13 +11,13 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password=None, is_active=False, **extra_kwargs):
         user = self.model(
             email=email,
-            username=extra_kwargs['username'],
+            username=extra_kwargs.get("username", None),
             is_active=is_active,
-            avatar=extra_kwargs['avatar'],
-            first_name=extra_kwargs["first_name"],
-            last_name=extra_kwargs['last_name'],
-            is_staff=extra_kwargs['is_staff'],
-            is_superuser=extra_kwargs['is_superuser']
+            avatar=extra_kwargs.get("avatar", None),
+            first_name=extra_kwargs.get("first_name", None),
+            last_name=extra_kwargs.get("last_name", None),
+            is_staff=extra_kwargs.get("is_staff", False),
+            is_superuser=extra_kwargs.get("is_superuser", False)
         )
         if password:
             user.set_password(password)
@@ -87,6 +88,11 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = "email"
     objects = UserManager()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['username'], name="username_search_indx"),
+        ]
 
     def __str__(self):
         return self.username

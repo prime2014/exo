@@ -1,4 +1,5 @@
 from email.policy import default
+from statistics import multimode
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -12,7 +13,10 @@ class Feed(models.Model):
         on_delete=models.CASCADE,
         related_name="writer"
     )
-    post = models.TextField()
+    post = models.TextField(
+        null=True,
+        blank=True
+    )
     likes = models.PositiveIntegerField(
         default=0
     )
@@ -23,11 +27,14 @@ class Feed(models.Model):
         default=timezone.now,
         editable=False
     )
+    media = models.FileField(
+        upload_to="post",
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ("-pub_date", )
 
     def __str__(self):
         return self.author.username  + " POST"
-
-

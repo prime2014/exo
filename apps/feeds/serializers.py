@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from apps.feeds.models import Feed
-from apps.accounts.serializers import UserSerializer
+from apps.accounts.serializers import UserSerializer, FeedAuthor
 
 
 
@@ -16,6 +16,7 @@ class FeedSerializer(ModelSerializer):
             "author",
             "post",
             "likes",
+            "media",
             "share",
             "pub_date"
         )
@@ -25,8 +26,9 @@ class FeedSerializer(ModelSerializer):
         ]
 
     def to_representation(self, instance):
+        request = self.context.get("request", None)
         result = super().to_representation(instance)
-        result['author'] = UserSerializer(instance=instance.author).data
+        result['author'] = FeedAuthor(instance=instance.author, context={"request": request}).data
         return result
 
     def create(self, validated_data):

@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.conf import settings
 from django.core.mail import send_mail
-import environ
+from django.utils.http import urlsafe_base64_encode
 
 
 @celery_app.task()
@@ -12,6 +12,7 @@ def send_activation_link(token, user):
     context = {
         'firstname': user.get("first_name"),
         "lastname": user.get("last_name"),
+        "id": urlsafe_base64_encode(force_bytes(user.get("pk"))),
         "token": token,
         "origin": settings.CORS_ALLOWED_ORIGINS[0]
     }

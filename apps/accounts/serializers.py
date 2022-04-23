@@ -1,4 +1,6 @@
 from distutils.command.upload import upload
+from xml.dom import ValidationErr
+from django.forms import ValidationError
 from rest_framework.serializers import ModelSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
@@ -41,6 +43,11 @@ class UserSerializer(ModelSerializer):
             "is_staff": {"write_only": True},
         }
 
+    def validate_password(self, password):
+        if len(password) < 8:
+            raise ValidationError(message="Password must be at least 8 characters long", code=400)
+        return password
+
     def create(self, validated_data):
         user = self.Meta.model.objects.create_user(**validated_data)
         if user:
@@ -63,6 +70,23 @@ class UserSerializer(ModelSerializer):
             instance.password = instance.password
         instance.save()
         return instance
+
+
+class FeedAuthor(ModelSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = (
+            "pk",
+            "first_name",
+            "last_name",
+            "username",
+            "avatar"
+        )
+        extra_kwargs = {
+            "relation": {"write_only": True},
+            "password": {"write_only": True},
+            "is_superuser": {"write_only": True},
+            "is_staff": {"write_only": True},
+        }
 
 
 class RelationshipSerializer(ModelSerializer):

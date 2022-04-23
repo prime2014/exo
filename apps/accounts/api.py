@@ -15,6 +15,7 @@ from apps.accounts.models import (
     Relationship,
 )
 from rest_framework import authentication, permissions, status
+from rest_framework.decorators import action
 
 User = get_user_model()
 
@@ -31,8 +32,9 @@ class LoginAPIView(APIView):
         password= request.data.get("password")
         try:
             user = authenticate.authenticate(request, username=email, password=password)
-            login(request, user)
-            return Response({'token': user.auth_token.key, 'user': UserSerializer(user).data}, status=status.HTTP_200_OK)
+            if user: login(request, user)
+            else: raise User.DoesNotExist
+            return Response({'token': user.auth_token.key, 'user': UserSerializer(user, context={"request": request}).data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'Invalid User Credentials!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -54,6 +56,28 @@ class UserViewset(ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def partial_update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(instance=self.get_object(), data=request.data, partial=True)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"Error": "There was an error updating the data"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['GET', 'PATCH'], detail=True)
+    def activate_account(self, request, *args, **kwargs):
+        user = self.get_object()
+        serialized = self.serializer_class(instance=user)
+        if request.method == "PATCH":
+            token = request.data.get("token")
+
+            if token and activation_token.check_token(serialized.data, token=token):
+                user.is_active = True
+                user.save(update_fields=['is_active'])
+            else:
+                return Response({"error": "Invalid token! Cannot activate user account"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 class RelationshipViewset(ModelViewSet):
     queryset = Relationship.objects.all()

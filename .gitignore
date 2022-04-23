@@ -1,7 +1,7 @@
 .dockerignore
 node_modules/
-__pycache__/
-pytest.cache/
+__pycache__
+.pytest.cache
 venv
 .env
 .env.development

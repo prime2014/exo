@@ -1,3 +1,4 @@
+from codecs import lookup
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import APIView
 from apps.accounts.auth import Authentication
@@ -6,16 +7,25 @@ from rest_framework.response import Response
 from apps.accounts.serializers import (
     LoginSerializer,
     UserSerializer,
-    RelationshipSerializer
+    RelationshipSerializer,
+    ProfileImageSerializer
 )
 from rest_framework import status,permissions
 from apps.accounts.utils import activation_token
 from apps.accounts.tasks import send_activation_link
 from apps.accounts.models import (
     Relationship,
+    ProfileImages
 )
 from rest_framework import authentication, permissions, status
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from django.views.decorators.vary import vary_on_headers
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from notifications.signals import notify
+from django_filters.rest_framework import DjangoFilterBackend
+from apps.accounts.filters import FriendFilter
 
 User = get_user_model()
 
@@ -41,9 +51,15 @@ class LoginAPIView(APIView):
 
 class UserViewset(ModelViewSet):
     queryset = User.objects.all()
-    authentication_classes = ()
-    permission_classes = (permissions.AllowAny, )
+    authentication_classes = (authentication.SessionAuthentication, authentication.TokenAuthentication)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     serializer_class = UserSerializer
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['username', 'first_name', 'last_name']
+    filterset_class = FriendFilter
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -56,7 +72,7 @@ class UserViewset(ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def partial_update(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         serializer = self.serializer_class(instance=self.get_object(), data=request.data, partial=True)
 
         if serializer.is_valid(raise_exception=True):
@@ -79,8 +95,27 @@ class UserViewset(ModelViewSet):
                 return Response({"error": "Invalid token! Cannot activate user account"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
+
+class ProfileImagesViewset(ModelViewSet):
+    queryset = ProfileImages.objects.all()
+    authentication_classes = (authentication.SessionAuthentication, )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    serializer_class = ProfileImageSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={"request": request})
+
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 class RelationshipViewset(ModelViewSet):
-    queryset = Relationship.objects.all()
+    queryset = Relationship.objects.all().select_related("from_person", "to_person")
     authentication_classes = (authentication.SessionAuthentication, )
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     serializer_class = RelationshipSerializer

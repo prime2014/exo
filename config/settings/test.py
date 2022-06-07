@@ -1,5 +1,5 @@
 from .base import * # noqa
-from .base import DEBUG, REST_FRAMEWORK
+
 
 
 DEBUG = True

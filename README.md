@@ -71,6 +71,12 @@ However on subsequent use of the project, run the following command
     docker-compose -f local.yml up
 ```
 
+## Running the test for django
+```
+    docker-compose -f local.yml run --rm django pytest
+```
+
+
 ## Stopping the project
 To stop the project just press `CTRL + C` on the terminal once.
 

@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.db.models import Q, F
 from versatileimagefield.fields import VersatileImageField,PPOIField
+from versatileimagefield.image_warmer import VersatileImageFieldWarmer
+from django.dispatch import receiver
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, is_active=False, **extra_kwargs):
@@ -24,7 +26,7 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
-    def create_superuser(self, email, first_name, last_name, username, password=None):
+    def create_superuser(self, email, first_name=None, last_name=None, username="Admin", password=None):
         return self.create_user(
             email=email,
             first_name=first_name,
@@ -57,10 +59,12 @@ class User(AbstractBaseUser):
         null=True
     )
     first_name= models.CharField(
-        max_length=30
+        max_length=30,
+        null=True
     )
     last_name = models.CharField(
-        max_length=30
+        max_length=30,
+        null=True
     )
     is_active = models.BooleanField(
         default=False,
@@ -85,6 +89,7 @@ class User(AbstractBaseUser):
         auto_now=True,
         editable=False
     )
+    meta = models.JSONField(null=True)
 
     USERNAME_FIELD = "email"
     objects = UserManager()
@@ -97,12 +102,47 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.username
 
+    def get_relationship(self, status=None):
+        if type(status) == "list":
+            return self.relation.filter(
+                to_user__status__in=[*status]
+            )
+        return self.relation.filter(
+            to_user__status = status
+        )
+
     def has_perm(self, perm, obj=None):
         return self.is_active or self.is_superuser
 
     def has_module_perms(self, app_label):
         return self.is_superuser
 
+
+class ProfileImages(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="avatars")
+    image = VersatileImageField(
+        upload_to=f"profile/",
+        width_field="width",
+        height_field="height"
+    )
+    width = models.PositiveIntegerField(
+        blank=True,
+        null=True
+    )
+    height = models.PositiveIntegerField(
+        blank=True,
+        null=True
+    )
+    ppoi = PPOIField(
+        'Image PPOI'
+    )
+    date_created = models.DateTimeField(
+        default=timezone.now,
+        editable=False
+    )
+
+    def __str__(self):
+        return f"{self.image.url}"
 
 
 class RelationshipManager(models.Manager):
@@ -155,7 +195,7 @@ class Relationship(models.Model):
     objects = RelationshipManager()
 
     def __str__(self):
-        return self.status
+        return f"{self.from_person}->{self.to_person}"
 
     class Meta:
         indexes = [
@@ -163,8 +203,23 @@ class Relationship(models.Model):
         ]
         constraints = [
             models.CheckConstraint(check=~Q(from_person=F('to_person')), name="no_self-relation"),
-            models.UniqueConstraint(fields=["from_person", "to_person", "status"], name="unique_relationship")
+            models.UniqueConstraint(fields=["from_person", "to_person"], name="unique_relationship")
         ]
 
 
+
+@receiver(models.signals.post_save, sender=ProfileImages)
+def warm_profile_images(sender, instance, **kwargs):
+    """Ensures Person head shots are created post-save"""
+    person_img_warmer = VersatileImageFieldWarmer(
+        instance_or_queryset=instance,
+        rendition_key_set=[
+            ("full_size", "url"),
+            ("thumbnail", "thumbnail__100x100"),
+            ("medium_square_crop", "crop__170x170"),
+            ("small_square_crop", "crop__50x50")
+        ],
+        image_attr='image'
+    )
+    num_created, failed_to_create = person_img_warmer.warm()
 

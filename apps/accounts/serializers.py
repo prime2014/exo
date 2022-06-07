@@ -4,11 +4,12 @@ from django.forms import ValidationError
 from rest_framework.serializers import ModelSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
-from apps.accounts.models import Relationship
+from apps.accounts.models import Relationship, ProfileImages
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 from django.conf import settings
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 User = get_user_model()
 
@@ -36,6 +37,7 @@ class UserSerializer(ModelSerializer):
             "is_active",
             "is_staff",
             "is_superuser",
+            "meta"
         )
         extra_kwargs = {
             "password": {"write_only": True},
@@ -64,12 +66,30 @@ class UserSerializer(ModelSerializer):
         instance.is_staff = validated_data.get("is_staff", instance.is_staff)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
         password = validated_data.get("password")
+        instance.meta = validated_data.get("meta", instance.meta)
         if password:
             instance.password = make_password(password)
         else:
             instance.password = instance.password
         instance.save()
         return instance
+
+
+class ProfileImageSerializer(ModelSerializer):
+    user = serializers.ReadOnlyField(
+        source="user.pk"
+    )
+    image = VersatileImageFieldSerializer(
+        sizes = [
+            ("full_size", "url"),
+            ("thumbnail", "thumbnail__100x100"),
+            ("medium_square_crop", "crop__170x170"),
+            ("small_square_crop", "crop__50x50")
+        ]
+    )
+    class Meta:
+        model = ProfileImages
+        fields = "__all__"
 
 
 class FeedAuthor(ModelSerializer):

@@ -1,7 +1,6 @@
 import pytest
 from rest_framework.test import APIRequestFactory
-import requests, logging
-from django.test import Client
+import logging
 
 
 logger = logging.getLogger(__name__)

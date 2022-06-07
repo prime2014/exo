@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.contrib.postgres"
 ]
 
 # Third party apps
@@ -61,7 +62,9 @@ INSTALLED_APPS += [
     "notifications",
     "notifications_rest",
     "debug_toolbar",
-    "drf_yasg"
+    "drf_yasg",
+    "django_filters",
+    "channels"
 ]
 
 
@@ -103,7 +106,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
+ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -177,6 +180,21 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000"
 ]
 
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "access-control-allow-origin",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with"
+]
+
+
 CELERY_BROKER_URL = env("REDIS_URL")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -187,6 +205,7 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_RESULTS_BACKEND = "django-db"
 CELERY_IMPORTS = ["apps"]
+
 
 VERSATILEIMAGEFIELD_SETTINGS = {
     # The amount of time, in seconds, that references to created images
@@ -227,7 +246,8 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated"
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 
@@ -283,3 +303,21 @@ CACHES = {
         'LOCATION': 'memcached:11211',
     }
 }
+
+
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'USE_JSONFIELD': True
+}
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND":"channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                ("redis", 6379)
+            ]
+        }
+    }
+}
+

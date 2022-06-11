@@ -27,6 +27,7 @@ from notifications.signals import notify
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.accounts.filters import FriendFilter
 
+
 User = get_user_model()
 
 authenticate = Authentication()

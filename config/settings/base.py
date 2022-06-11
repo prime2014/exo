@@ -64,6 +64,7 @@ INSTALLED_APPS += [
     "debug_toolbar",
     "drf_yasg",
     "django_filters",
+    "haystack",
     "channels"
 ]
 
@@ -319,5 +320,13 @@ CHANNEL_LAYERS = {
             ]
         }
     }
+}
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'django:9200/',
+        'INDEX_NAME': 'haystack',
+    },
 }
 

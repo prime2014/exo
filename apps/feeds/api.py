@@ -20,6 +20,8 @@ from django.contrib.contenttypes.models import ContentType
 from notifications.signals import notify
 from django.db.models import Prefetch
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
+from django_filters.rest_framework import DjangoFilterBackend
+from apps.feeds.filters import FilterUsersPost
 
 
 User = get_user_model()
@@ -95,6 +97,8 @@ class FeedGenericAPIView(ListAPIView):
     permission_classes = (permissions.IsAuthenticated, )
     pagination_class = FeedCursorPagination
     lookup_url_kwargs = "pk"
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = FilterUsersPost
 
     def get_queryset(self):
         if self.request.user.is_staff or self.request.user.is_superuser:

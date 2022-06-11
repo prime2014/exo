@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/rest/auth/", include("rest_framework.urls")),
     path('accounts/', include('apps.accounts.urls')),
     path("feeds/", include("apps.feeds.urls")),
+    path("search/", include("haystack.urls")),
     path("notifications/", include("notifications_rest.urls"))
 ]+staticfiles_urlpatterns()
 

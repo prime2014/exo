@@ -63,7 +63,9 @@ class MediaViewset(ModelViewSet):
 
         if serializers.is_valid(raise_exception=True):
             serializers.save()
-            return Response(serializers.data, status=status.HTTP_201_CREATED)
+            feed = Feed.objects.get(pk=serializers.data.get("post"))
+            feed_serializer = FeedSerializer(instance=feed)
+            return Response(feed_serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 

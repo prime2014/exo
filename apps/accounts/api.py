@@ -52,8 +52,8 @@ class LoginAPIView(APIView):
 
 class UserViewset(ModelViewSet):
     queryset = User.objects.all()
-    authentication_classes = (authentication.SessionAuthentication, authentication.TokenAuthentication)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    authentication_classes = ()
+    permission_classes = (permissions.AllowAny, )
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = ['username', 'first_name', 'last_name']

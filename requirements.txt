@@ -6,8 +6,8 @@ attrs==21.4.0
 autobahn==22.5.1
 Automat==20.2.0
 backports.zoneinfo==0.2.1
-billiard==4.0.0
-celery==5.2.6
+billiard==3.6.4.0
+celery==5.2.7
 certifi==2022.6.15
 cffi==1.15.0
 channels==3.0.4
@@ -27,12 +27,11 @@ Deprecated==1.2.13
 Django==4.0.5
 django-celery-beat==2.3.0
 django-celery-results==2.3.1
-django-celery-results==2.3.0
 django-cors-headers==3.13.0
 django-debug-toolbar==3.4.0
 django-environ==0.9.0
-django-filer==2.2
-django-filter==21.1
+django-filer==2.2.1
+django-filter==22.1
 django-haystack==3.2.1
 django-js-asset==2.0.0
 django-model-utils==4.2.0
@@ -45,6 +44,7 @@ django-versatileimagefield==2.2
 djangorestframework==3.13.1
 drf-yasg==1.20.0
 easy-thumbnails==2.8.1
+elastic-transport==8.1.2
 elasticsearch==8.2.3
 hiredis==2.0.0
 hyperlink==21.0.0
@@ -58,7 +58,7 @@ jsonfield==3.1.0
 kombu==5.2.4
 lxml==4.9.0
 MarkupSafe==2.1.1
-msgpack==1.0.3
+msgpack==1.0.4
 packaging==21.3
 Pillow==9.1.1
 pluggy==1.0.0
@@ -94,11 +94,12 @@ tomli==2.0.1
 Twisted==22.4.0
 txaio==22.2.1
 typing_extensions==4.2.0
+tzdata==2022.1
 Unidecode==1.1.2
 uritemplate==4.1.1
 urllib3==1.26.9
 vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1
-wrapt==1.14.0
+wrapt==1.14.1
 zope.interface==5.4.0

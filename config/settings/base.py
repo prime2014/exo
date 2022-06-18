@@ -325,7 +325,7 @@ CHANNEL_LAYERS = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'django:9200/',
+        'URL': 'http://django:9200/',
         'INDEX_NAME': 'haystack',
     },
 }

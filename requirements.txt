@@ -6,7 +6,7 @@ attrs==21.4.0
 autobahn==22.3.2
 Automat==20.2.0
 backports.zoneinfo==0.2.1
-billiard==3.6.4.0
+billiard==4.0.0
 celery==5.2.6
 certifi==2022.6.15
 cffi==1.15.0

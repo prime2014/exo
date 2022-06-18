@@ -39,7 +39,7 @@ django-mptt==0.13.4
 django-notifications-hq==1.7.0
 django-notifications-rest==0.0.1
 django-polymorphic==3.1.0
-django-timezone-field==4.2.3
+django-timezone-field==5.0
 django-versatileimagefield==2.2
 djangorestframework==3.13.1
 drf-yasg==1.20.0
@@ -99,5 +99,5 @@ urllib3==1.26.9
 vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1
-wrapt==1.14.0
+wrapt==1.14.1
 zope.interface==5.4.0

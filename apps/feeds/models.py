@@ -50,7 +50,7 @@ class Feed(models.Model):
     )
     pub_date = models.DateTimeField(
         default=timezone.now,
-        editable=False
+        editable=False,
     )
     is_shared = models.BooleanField(
         default=False,

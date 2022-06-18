@@ -22,6 +22,7 @@ from django.db.models import Prefetch
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.feeds.filters import FilterUsersPost
+from django.db.models import Q
 
 
 User = get_user_model()
@@ -103,11 +104,12 @@ class FeedGenericAPIView(ListAPIView):
     filterset_class = FilterUsersPost
 
     def get_queryset(self):
-        if self.request.user.is_staff or self.request.user.is_superuser:
+        client = self.request.user
+        if client.is_staff or client.is_superuser:
             return Feed.objects.all()
-        elif self.request.user.is_authenticated:
-            friends = list(self.request.user.relation.filter(to_user__status="Friends"))
-            qs = Feed.objects.select_related("author").prefetch_related("posted_photos", "tag").filter(author__in=[self.request.user, *friends])
+        elif client.is_authenticated:
+            users = set(client.relation.filter(to_user__status="Friends")).union({ client })
+            qs = Feed.objects.prefetch_related("posted_photos", "tag", "author__relation").select_related("author").filter(Q(author__in=users) & Q(author__relation__to_user__status="Friends"))
             return qs
         raise NotAuthenticated(detail="You need to be authenticated to view the feed", code=401)
 

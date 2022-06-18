@@ -70,7 +70,7 @@ pycparser==2.21
 pylibmc==1.6.1
 pymemcache==3.5.2
 pyOpenSSL==22.0.0
-pyparsing==3.0.8
+pyparsing==3.0.9
 pytest==7.1.2
 pytest-sugar==0.9.4
 python-crontab==2.6.0

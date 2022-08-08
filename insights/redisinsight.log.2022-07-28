@@ -1,2 +1,0 @@
-WARNING 2022-07-28 12:21:18,511 django.request Not Found: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/value-details/
-ERROR 2022-07-28 17:16:12,145 django.request Internal Server Error: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/value-details/

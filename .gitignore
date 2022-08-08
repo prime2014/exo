@@ -8,7 +8,7 @@ venv
 .env.production
 
 .idea
-insight/
-rod/
-media/
+insights
+rod
+media
 static

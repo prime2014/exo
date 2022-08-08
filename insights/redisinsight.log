@@ -1,0 +1,1 @@
+WARNING 2022-08-05 18:28:22,723 django.request Bad Request: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/redisgraph/send-command/

@@ -1,0 +1,4 @@
+WARNING 2022-08-03 16:55:20,584 django.request Forbidden: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-08-03 16:55:20,592 django.request Forbidden: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-08-03 16:55:23,651 django.request Forbidden: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-08-03 16:55:23,673 django.request Forbidden: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/

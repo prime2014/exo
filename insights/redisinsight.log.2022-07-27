@@ -1,0 +1,4 @@
+WARNING 2022-07-27 13:35:26,756 django.request Bad Request: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-07-27 13:35:26,832 django.request Bad Request: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-07-27 13:36:10,164 django.request Bad Request: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/
+WARNING 2022-07-27 13:36:10,194 django.request Bad Request: /api/instance/4c39b4d7-d7db-4841-b31f-e78d1efb48cf/exec-query/

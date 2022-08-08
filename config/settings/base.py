@@ -27,7 +27,7 @@ env = environ.Env()
 
 environ.Env.read_env(str(BASE_DIR / ".env"))
 
-APPS_DIR = BASE_DIR / "apps"
+APPS_DIR = BASE_DIR / "djapps"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -71,8 +71,8 @@ INSTALLED_APPS += [
 
 #custom apps
 INSTALLED_APPS += [
-    "apps.accounts",
-    "apps.feeds"
+    "djapps.accounts",
+    "djapps.feeds"
 ]
 
 MIDDLEWARE = [
@@ -163,7 +163,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "accounts.User"
 
-AUTHENTICATION_BACKENDS = ["apps.accounts.auth.Authentication"]
+AUTHENTICATION_BACKENDS = ["djapps.accounts.auth.Authentication"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -205,7 +205,7 @@ CELERY_TASK_TIME_LIMIT = 5 * 60
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_RESULTS_BACKEND = "django-db"
-CELERY_IMPORTS = ["apps"]
+CELERY_IMPORTS = ["djapps"]
 
 
 VERSATILEIMAGEFIELD_SETTINGS = {

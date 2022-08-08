@@ -5,7 +5,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator, OriginValidator
 from channels.auth import AuthMiddlewareStack
 from django.conf import settings
-from apps.accounts.routing import websocket_urlpatterns as account_websocket_urlpatterns
+from djapps.accounts.routing import websocket_urlpatterns as account_websocket_urlpatterns
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.base')

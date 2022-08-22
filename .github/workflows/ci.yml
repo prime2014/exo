@@ -6,6 +6,16 @@ name: Testing and Linting workflows
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
+  SECRET_KEY: u6t(n6nx(+172pn#jf92-n_69vw6t8w=4e!brt_g&zxkm+-5kl
+  DJANGO_SETTINGS_MODULE: config.settings.base
+  POSTGRES_URL: postgres://prime:belindat2014@postgres:5432/exodb
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: prime
+  POSTGRES_PASSWORD: belindat2014
+  POSTGRES_DB: exodb
+  POSTGRES_PORT: 5432
+  REDIS_URL: redis://redisModules:6379/0
+  DEFAULT_FROM_EMAIL: Exo<exo@mail.com>
 
 
 on:
@@ -48,6 +58,7 @@ jobs:
   pytest:
     name: pytest
     runs-on: ubuntu-latest
+
     defaults:
       run:
         shell: bash

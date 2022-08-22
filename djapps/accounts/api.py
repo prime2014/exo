@@ -29,6 +29,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djapps.accounts.filters import FriendFilter
 from djapps.accounts.reconstruct_on_redis import rconn_user
 import logging
+from djapps.accounts.tasks import send_json_user_document
+from django_eventstream import send_event
 
 User = get_user_model()
 
@@ -58,7 +60,7 @@ class LoginAPIView(APIView):
 
 class UserViewset(ModelViewSet):
     queryset = User.objects.all()
-    authentication_classes = ()
+    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
     permission_classes = (permissions.AllowAny, )
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
@@ -100,11 +102,23 @@ class UserViewset(ModelViewSet):
                 user.is_active = True
                 user.save(update_fields=['is_active'])
                 active_user = self.serializer_class(instance=user, context={"request": request}).data
-                rconn_user.create_user(active_user)
+                user = rconn_user.create_user(active_user)
+                send_json_user_document.delay(user)
                 return Response(active_user, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Invalid token! Cannot activate user account"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+
+    @action(methods=["POST"], detail=True)
+    def request_friend(self, request, *args, **kwargs):
+        try:
+            user = self.serializer_class(instance=request.user, context={"request": request}).data
+            data = request.data
+            friend_pk = data.get("pk")
+            send_event(f"user-{friend_pk}", "friend_request_notification", user)
+            return Response({"success": "Your friend request has been sent"}, status=status.HTTP_200_OK)
+        except Exception() as exc:
+            return Response ({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileImagesViewset(ModelViewSet):

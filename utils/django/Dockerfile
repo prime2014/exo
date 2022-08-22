@@ -20,6 +20,8 @@ RUN apt-get update \
   && apt-get install -y libmagic-dev \
   # postgres client install
   && apt-get install -f -y postgresql-client \
+  # install a pushpin server
+  && apt-get install -y pushpin \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*

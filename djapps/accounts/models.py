@@ -53,10 +53,10 @@ class User(AbstractBaseUser):
         unique=True,
         null = False
     )
-    avatar = models.ImageField(
-        upload_to="avatar/",
-        blank=True,
-        null=True
+    avatar = models.CharField(
+        max_length=225,
+        null=True,
+        blank=True
     )
     first_name= models.CharField(
         max_length=30,

@@ -65,7 +65,8 @@ INSTALLED_APPS += [
     "drf_yasg",
     "django_filters",
     "haystack",
-    "channels"
+    "channels",
+    "django_eventstream"
 ]
 
 
@@ -76,6 +77,7 @@ INSTALLED_APPS += [
 ]
 
 MIDDLEWARE = [
+    "django_grip.GripMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
@@ -88,6 +90,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+
+GRIP_URL = 'http://localhost:5561'
 
 TEMPLATES = [
     {
@@ -181,6 +185,11 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000"
 ]
 
+GRIP_PROXIES = [
+    {
+        'control_uri': 'http://localhost:5561'
+    }
+]
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -256,6 +265,11 @@ DEFAULT_FROM_EMAIL= env("DEFAULT_FROM_EMAIL")
 EMAIL_HOST= "mailhog"
 EMAIL_PORT = 1025
 
+EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
+EVENTSTREAM_ALLOW_ORIGIN = 'http://localhost:3000'
+EVENTSTREAM_ALLOW_CREDENTIALS = True
+EVENTSTREAM_ALLOW_HEADERS = 'Authorization'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -316,7 +330,7 @@ CHANNEL_LAYERS = {
         "BACKEND":"channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
-                ("redis", 6379)
+                ("redisModules", 6379)
             ]
         }
     }

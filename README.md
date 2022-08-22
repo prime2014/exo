@@ -4,7 +4,7 @@
 
 This project development structure offers potential capabilites for **social media** applications.
 It uses this tech stack
-1. Python/Django/djangorestframework
+1 Python/Django/djangorestframework
 2. REST API
 3. Postgres
 4. React
@@ -12,11 +12,11 @@ Other technologies used are *redis* and *celery* to handle background tasks
 and [docker](https://docker.com) for packaging and shipping the application
 
 ## TABLE OF CONTENT
-- Requirements
-- File Structure
-- Building the project with docker
-- Starting the project
-- Stopping the project
+- [Requirements](#requirements)
+- [File Structure](#file-structure)
+- [Building the project with docker](#building-the-project-with-docker)
+- [Starting the project](#starting-the-project)
+- [Stopping the project](#stopping-the-project)
 
 
 
@@ -35,7 +35,7 @@ You must have ***python*** installed in your system and ***node*** as well
 ## File Structure
 ```
 ├───.github
-├───apps
+├───djapps
 │   ├───accounts
 │   │   └───migrations
 │   ├───feeds

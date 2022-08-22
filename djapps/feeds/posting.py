@@ -1,4 +1,3 @@
-from asyncio.log import logger
 import redis
 from redis.commands.graph.node import Node
 from redis.commands.graph.edge import Edge
@@ -10,6 +9,7 @@ import json, random
 import time, uuid
 import math
 import logging
+from django_eventstream import send_event
 
 
 logging.basicConfig(format="%(asctime)s %(module)s %(message)s", level=logging.INFO, encoding="utf8")
@@ -21,10 +21,10 @@ conn = redis.Redis(host="redisModules", port=6379, db=0)
 social_graph = conn.graph("SocialMedia")
 
 
+
 def setObject(user, uid):
     user['id'] = uid
     return user
-
 
 
 def create_post(pk:int, post:dict):

@@ -6,6 +6,8 @@ from channels.security.websocket import AllowedHostsOriginValidator, OriginValid
 from channels.auth import AuthMiddlewareStack
 from django.conf import settings
 from djapps.accounts.routing import websocket_urlpatterns as account_websocket_urlpatterns
+from django.urls import path, re_path
+import django_eventstream
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.base')
@@ -13,7 +15,12 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.base')
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,
+    "http": URLRouter([
+        re_path(r"^events/", AuthMiddlewareStack(
+            URLRouter(django_eventstream.routing.urlpatterns)
+        )),
+        re_path(r"^", django_asgi_app)
+        ]),
     "websocket":OriginValidator(AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(

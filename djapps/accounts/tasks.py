@@ -4,6 +4,8 @@ from django.utils.encoding import force_bytes
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode
+import redis
+
 
 
 @celery_app.task()
@@ -26,3 +28,25 @@ def send_activation_link(token, user):
         recipient_list=[email],
         html_message=msg_html
     )
+
+
+@celery_app.task(serializer="json")
+def send_json_user_document(user:dict):
+    pk = user.pop("pgpk")
+    user.update({"pk": pk})
+    try:
+        conn = redis.Redis("redisModules", port=6379, db=0)
+        conn.json().set(f"user:{pk}", "$", user, nx=True)
+    except redis.exceptions.ConnectionError() as exc:
+        raise exc
+
+
+if __name__ == "__main__":
+    user = {
+        "pgpk": 55,
+        "first_name": "Prime",
+        "last_name": "Omondi",
+        "avatar": "vroom",
+        "username": "prime2014"
+    }
+    send_json_user_document.delay(user)

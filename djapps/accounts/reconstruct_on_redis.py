@@ -11,6 +11,7 @@ import math
 from django.contrib.sessions.backends.db import SessionStore
 
 
+
 class RedisConnectionAbstract(object):
     def __init__(self):
         self.conn = redis.Redis(host="redisModules", port=6379)
@@ -90,8 +91,15 @@ class UserCrudOperations(RedisConnectionAbstract):
         '''gets a list of users who are following the requesting user'''
         pass
 
-    def add_friend(self, owner, other):
-        pass
+    def add_friend(self, pk, friend_pk):
+        try:
+            template = Template("MATCH (p1:Person {pgpk: $pk}), (p2:Person {pgpk: $friend_pk}) CREATE (p1)-[:friends_with]->(p2), (p2)-[:friends_with]->(p1) RETURN p2")
+            query = template.substitute(pk=pk, friend_pk=friend_pk)
+            result = self.social_graph.query(query).result_set
+            user_result = [setObject(rec[0].properties, rec[0].id) for rec in result]
+            return user_result[0]
+        except Exception() as exc:
+            raise "There was a problem with your request"
 
     def block_friend(self, owner, other):
         pass
@@ -99,3 +107,8 @@ class UserCrudOperations(RedisConnectionAbstract):
 
 
 rconn_user = UserCrudOperations()
+
+
+if __name__ == "__main__":
+    rconn_user.add_friend(pk=59, friend_pk=60)
+

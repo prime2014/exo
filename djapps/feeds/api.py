@@ -22,6 +22,7 @@ from rest_framework.renderers import JSONRenderer
 from djapps.feeds.posting import create_post
 import time, uuid, json
 from datetime import datetime, timezone
+from djapps.feeds.tasks import send_posts
 
 
 User = get_user_model()
@@ -49,6 +50,7 @@ class PostView(APIView):
         try:
             posted = create_post(user.get("pk"), request.data)
             posted["author"] = user
+            # send_posts.chunk(list((pk, posted) for pk in list_of_friends), 300)()
             return Response(posted, status=status.HTTP_201_CREATED)
         except Exception as exc:
             return Response({"error": "There was a problem creating your post!"}, status=status.HTTP_400_BAD_REQUEST)

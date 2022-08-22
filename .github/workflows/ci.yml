@@ -66,6 +66,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create a .env file
+        run: |
+          if [ ! -f .env ]; then touch ./.env; fi
+
       - name: Install pytest
         run: |
           pip install pytest

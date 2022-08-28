@@ -94,9 +94,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: develop a container for it
-        uses: docker://prime2014/elope_django
-
       - name: Create a .env file
         run: |
           if [ ! -f .env ]; then touch ./.env; fi
@@ -106,6 +103,5 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
-
         run: |
           docker-compose -f staging.yml run --rm django pytest

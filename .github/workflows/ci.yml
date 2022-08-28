@@ -6,16 +6,6 @@ name: Testing and Linting workflows
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
-  SECRET_KEY: u6t(n6nx(+172pn#jf92-n_69vw6t8w=4e!brt_g&zxkm+-5kl
-  DJANGO_SETTINGS_MODULE: config.settings.base
-  POSTGRES_URL: postgres://prime:belindat2014@postgres:5432/exodb
-  POSTGRES_HOST: postgres
-  POSTGRES_USER: prime
-  POSTGRES_PASSWORD: belindat2014
-  POSTGRES_DB: exodb
-  POSTGRES_PORT: 5432
-  REDIS_URL: redis://redisModules:6379/0
-  DEFAULT_FROM_EMAIL: Exo<exo@mail.com>
 
 
 on:
@@ -36,6 +26,7 @@ jobs:
     defaults:
       run:
         shell: bash
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -53,15 +44,30 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          flake8 --statistics
+          docker-compose -f local.yml run --rm django flake8 --statistics
 
   pytest:
     name: pytest
     runs-on: ubuntu-latest
 
+    services:
+      django:
+        image: docker://prime2014/elope_django
+        ports:
+          - 8080:8080
+
+      postgres:
+        image: docker://postgres:12
+
+      redis:
+        image: docker://redislabs/redismod
+        ports:
+          - 6379/tcp
+
     defaults:
       run:
         shell: bash
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -75,5 +81,8 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
+        uses: docker://django:3.8
+        with:
+          python-version: 3.8
         run: |
-          docker-compose -f local.yml run --rm django pytest
+          docker-compose -f staging.yml run --rm django pytest

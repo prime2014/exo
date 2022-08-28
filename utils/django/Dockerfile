@@ -12,16 +12,14 @@ RUN apt-get update \
   && apt-get install -y libpq-dev \
   # Translations dependencies
   && apt-get install -y gettext \
-  # Memcached installation
-  && apt-get install -y libmemcached-dev \
-  # libmemcache setup
-  && apt-get install -y zlib1g-dev \
   # versatileimage dependencies
   && apt-get install -y libmagic-dev \
   # postgres client install
   && apt-get install -f -y postgresql-client \
   # install a pushpin server
   && apt-get install -y pushpin \
+  # install opencv utilites
+  && apt-get install -y ffmpeg libsm6 libxext6 \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,30 @@
+U+1F642-slightly smiling face
+U+1F643-Upside Down smiling emoji
+U+1F62D-Loudly crying face
+U+1F622-crying face
+U+1F924-drooling emoji
+U+1F920-cowboy hat face
+U+1F604-very happy emoji
+U+1F603-smiling emoji
+U+1F601-Happy emoji
+U+1F62C-grimacing emoji
+U+1F60F-smirk emoji
+U+1F60E-sunglasses emoji
+U+1F914-thinking emoji
+U+1F612-Unamused emoji
+U+1F61F-worried emoji
+U+1F632-surprised emoji
+U+1F636-emoji without mouth
+U+1F611-expressionless emoji
+U+1F633-flushed emoji
+U+1F626-frowning emoji
+U+1F609-wink emoji
+U+1F60D-Heart eyes
+U+1F917-Hugging emoji
+U+1F60B-Hungry emoji
+U+1F61A-kiss emoji
+U+1F62F-surprised emoji
+U+1F630-cold sweat emoji
+U+1F924-drooling emoji
+U+1F912-sick emoji 1
+U+1F915-Hurt emoji

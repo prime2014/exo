@@ -62,9 +62,7 @@ INSTALLED_APPS += [
     "notifications",
     "notifications_rest",
     "debug_toolbar",
-    "drf_yasg",
     "django_filters",
-    "haystack",
     "channels",
     "django_eventstream"
 ]
@@ -115,7 +113,7 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {'default': env.db("POSTGRES_URL")}
+DATABASES = {'default': env.db("POSTGRES_URL", default="postgres://testuser:tespassword@postgres:5432/exodb")}
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
@@ -205,7 +203,7 @@ CORS_ALLOW_HEADERS = [
 ]
 
 
-CELERY_BROKER_URL = env("REDIS_URL")
+CELERY_BROKER_URL = env("REDIS_URL", default="redis://redisModules:6379/0")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -261,7 +259,7 @@ REST_FRAMEWORK = {
 }
 
 
-DEFAULT_FROM_EMAIL= env("DEFAULT_FROM_EMAIL")
+DEFAULT_FROM_EMAIL= env("DEFAULT_FROM_EMAIL", default="Exo<exo@mail.com>")
 EMAIL_HOST= "mailhog"
 EMAIL_PORT = 1025
 
@@ -312,13 +310,6 @@ hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + INTERNAL_IPS
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': 'memcached:11211',
-    }
-}
-
 
 DJANGO_NOTIFICATIONS_CONFIG = {
     'USE_JSONFIELD': True
@@ -336,11 +327,4 @@ CHANNEL_LAYERS = {
     }
 }
 
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://django:9200/',
-        'INDEX_NAME': 'haystack',
-    },
-}
 

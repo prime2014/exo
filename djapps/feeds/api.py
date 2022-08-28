@@ -1,3 +1,5 @@
+from curses.ascii import HT
+from decimal import InvalidOperation
 from textwrap import indent
 from rest_framework.viewsets import ModelViewSet
 from djapps.feeds.models import Feed, Media, Tags, Comments
@@ -23,13 +25,56 @@ from djapps.feeds.posting import create_post
 import time, uuid, json
 from datetime import datetime, timezone
 from djapps.feeds.tasks import send_posts
+from rest_framework.parsers import FormParser, MultiPartParser
+from django.conf import settings
+import os
+from PIL import Image
+import secrets
+import mimetypes
+from moviepy.editor import VideoFileClip
+import cv2
 
+
+time.time()
 
 User = get_user_model()
 
 logging.basicConfig(encoding="utf-8", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 logger = logging.getLogger(__name__)
+
+
+class PostMedia(APIView):
+    parser_classes = (FormParser, MultiPartParser)
+    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        file = request.FILES["file"]
+        host = request.META["HTTP_HOST"]
+        logger.info("META HOST: %s" % (host, ))
+        type = mimetypes.guess_type(file.name, None)[0].split("/")[0]
+        name, ext =  os.path.splitext(file.name)
+        if file and type == "image":
+            try:
+                my_image = Image.open(file)
+                timestamp = secrets.token_urlsafe(8)
+                my_image.save(os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
+                # my_image.save(os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
+                url = str("http://127.0.0.1:8000/" + os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
+                return Response({"file": f"{url}"}, status=status.HTTP_200_OK)
+            except IOError() as exc:
+                return Response ({"error": "There was a problem with your file upload"}, status=status.HTTP_400_BAD_REQUEST)
+        elif file and type == "video":
+            try:
+                timestamp = secrets.token_urlsafe(8)
+                with open(os.path.join(settings.MEDIA_ROOT, "video", f"{name}_{timestamp}{ext}"), "ab") as destination:
+                    for chunks in file.chunks():
+                        destination.write(chunks)
+                return Response({"success": "file successfully submitted"}, status=status.HTTP_200_OK)
+            except IOError() as exc:
+                return Response ({"error": "There was a problem with your file upload"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -148,7 +193,6 @@ class FeedGenericAPIView(ListAPIView):
 class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
 
     def create(self, request, *args, **kwargs):
-
         serializers = self.serializer_class(data=request.data, context={"request": request})
         if serializers.is_valid(raise_exception=True):
             self.perform_create(serializers)

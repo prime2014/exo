@@ -7,7 +7,8 @@ from djapps.feeds.api import (
     MediaViewset,
     TagsViewset,
     CommentViewset,
-    PostView
+    PostView,
+    PostMedia
 )
 
 
@@ -23,5 +24,6 @@ urlpatterns = [
     # path("api/media/<int:pk>/", MediaView.as_view()),
     path("api/v1/feeds/", FeedGenericAPIView.as_view()),
     path("api/v1/feeds/write/", PostView.as_view()),
-    path("api/v1/feeds/<int:pk>/", FeedAPIDetail.as_view())
+    path("api/v1/feeds/<int:pk>/", FeedAPIDetail.as_view()),
+    path("api/media/content/", PostMedia.as_view())
 ]

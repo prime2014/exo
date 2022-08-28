@@ -1,3 +1,4 @@
+from bz2 import compress
 import redis
 from redis.commands.graph.node import Node
 from redis.commands.graph.edge import Edge
@@ -25,6 +26,10 @@ social_graph = conn.graph("SocialMedia")
 def setObject(user, uid):
     user['id'] = uid
     return user
+
+
+# def get_post(pk):
+#     social_graph.q
 
 
 def create_post(pk:int, post:dict):

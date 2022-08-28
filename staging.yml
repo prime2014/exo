@@ -9,11 +9,11 @@ services:
     image: postgres:12
     container_name: exo_local_postgres
     environment:
-      - POSTGRES_HOST: postgres
-      - POSTGRES_USER: testuser
-      - POSTGRES_PASSWORD: testpassword
-      - POSTGRES_DB: exodb
-      - POSTGRES_PORT: 5432
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: exodb
+      POSTGRES_PORT: 5432
     volumes:
       - local_db:/var/lib/postgresql/data
     networks:

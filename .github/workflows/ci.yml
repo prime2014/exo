@@ -95,7 +95,6 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
-        uses: docker://django:3.8
         with:
           python-version: 3.8
         run: |

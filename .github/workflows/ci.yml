@@ -95,7 +95,5 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
-        with:
-          python-version: 3.8
         run: |
           docker-compose -f staging.yml run --rm django pytest

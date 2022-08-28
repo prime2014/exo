@@ -6,7 +6,7 @@ attrs==22.1.0
 autobahn==22.7.1
 Automat==20.2.0
 backports.zoneinfo==0.2.1
-billiard==3.6.4.0
+billiard==4.0.2
 celery==5.2.7
 certifi==2022.6.15
 cffi==1.15.1
@@ -46,6 +46,7 @@ django-timezone-field==5.0
 django-versatileimagefield==2.2
 djangorestframework==3.13.1
 easy-thumbnails==2.8.3
+flake8==5.0.4
 gripcontrol==4.1.0
 gunicorn==20.1.0
 hiredis==2.0.0
@@ -59,6 +60,7 @@ jsonfield==3.1.0
 kombu==5.2.4
 lxml==4.9.1
 MarkupSafe==2.1.1
+mccabe==0.7.0
 moviepy==1.0.3
 msgpack==1.0.4
 numpy==1.23.2
@@ -73,7 +75,9 @@ pubcontrol==3.3.0
 py==1.11.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pycodestyle==2.9.1
 pycparser==2.21
+pyflakes==2.5.0
 PyJWT==2.4.0
 pyOpenSSL==22.0.0
 pyparsing==3.0.9

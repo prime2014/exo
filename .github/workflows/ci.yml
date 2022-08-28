@@ -30,8 +30,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          entrypoint: ""
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -50,7 +48,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          docker-compose -f staging.yml run --rm django flake8 --statistics
+          docker-compose -f staging.yml run --rm --entrypoint /bin/bash django flake8 --statistics
 
   pytest:
     name: pytest
@@ -63,8 +61,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          entrypoint: ""
 
       - name: Create a .env file
         run: |
@@ -77,4 +73,4 @@ jobs:
       - name: Test Code with pytest
 
         run: |
-          docker-compose -f staging.yml run --rm django pytest
+          docker-compose -f staging.yml run --rm --entrypoint /bin/bash django pytest

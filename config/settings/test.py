@@ -1,10 +1,8 @@
 from .base import * # noqa
 
 
-
 DEBUG = True
 
-SECRET_KEY = env("SECRET_KEY")
 
 REST_FRAMEWORK = {
     # "DEFAULT_AUTHENTICATION_CLASSES":[

@@ -1,11 +1,6 @@
-from ast import Num
-from cgitb import lookup
-from email.mime import base
-from typing_extensions import Self
 from django_filters import rest_framework as filters
 from django.contrib.auth import get_user_model
-from djapps.accounts.models import Relationship
-from django.db.models import Q, F
+from django.db.models import F
 
 User = get_user_model()
 
@@ -21,5 +16,3 @@ class FriendFilter(filters.FilterSet):
         fields = (
             "first_name",
         )
-
-

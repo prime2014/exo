@@ -38,7 +38,6 @@ SECRET_KEY = env("SECRET_KEY", default="u6t(n6nx(+172pn#jf92-n_69vw6t8w=4e!#brt_
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -68,7 +67,7 @@ INSTALLED_APPS += [
 ]
 
 
-#custom apps
+# custom apps
 INSTALLED_APPS += [
     "djapps.accounts",
     "djapps.feeds"
@@ -94,7 +93,7 @@ GRIP_URL = 'http://localhost:5561'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [Path.joinpath(APPS_DIR, "templates"),],
+        'DIRS': [Path.joinpath(APPS_DIR, "templates"), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -242,13 +241,13 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     'avatar_gallery': [
         ('avatar_profile', 'crop__170x170'),
     ],
-    'feed_photos':[
+    'feed_photos': [
         ('timeline_photos', 'crop__1200x630'),
     ]
 }
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES":[
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication"
     ],
@@ -259,8 +258,8 @@ REST_FRAMEWORK = {
 }
 
 
-DEFAULT_FROM_EMAIL= env("DEFAULT_FROM_EMAIL", default="Exo<exo@mail.com>")
-EMAIL_HOST= "mailhog"
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Exo<exo@mail.com>")
+EMAIL_HOST = "mailhog"
 EMAIL_PORT = 1025
 
 EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
@@ -272,7 +271,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose':{
+        'verbose': {
             'format': '{levelname} {module} {process:d} {thread:d} {message}',
             'style': '{'
         },
@@ -286,16 +285,16 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers':{
-        'console':{
+    'handlers': {
+        'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
-            'filters':['require_debug_true']
+            'filters': ['require_debug_true']
         }
     },
     'root': {
-        'handlers':['console'],
+        'handlers': ['console'],
         'level': 'DEBUG'
     }
 }
@@ -310,7 +309,6 @@ hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + INTERNAL_IPS
 
 
-
 DJANGO_NOTIFICATIONS_CONFIG = {
     'USE_JSONFIELD': True
 }
@@ -318,7 +316,7 @@ DJANGO_NOTIFICATIONS_CONFIG = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND":"channels_redis.core.RedisChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [
                 ("redisModules", 6379)
@@ -326,5 +324,3 @@ CHANNEL_LAYERS = {
         }
     }
 }
-
-

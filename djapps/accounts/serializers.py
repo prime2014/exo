@@ -1,15 +1,12 @@
-from distutils.command.upload import upload
-from xml.dom import ValidationErr
 from django.forms import ValidationError
 from rest_framework.serializers import ModelSerializer
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from djapps.accounts.models import Relationship, ProfileImages
 from versatileimagefield.serializers import VersatileImageFieldSerializer
-from django.conf import settings
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-from versatileimagefield.serializers import VersatileImageFieldSerializer
+
 
 User = get_user_model()
 
@@ -102,13 +99,14 @@ class ProfileImageSerializer(ModelSerializer):
         source="user.pk"
     )
     image = VersatileImageFieldSerializer(
-        sizes = [
+        sizes=[
             ("full_size", "url"),
             ("thumbnail", "thumbnail__100x100"),
             ("medium_square_crop", "crop__170x170"),
             ("small_square_crop", "crop__50x50")
         ]
     )
+
     class Meta:
         model = ProfileImages
         fields = "__all__"
@@ -134,7 +132,7 @@ class FeedAuthor(ModelSerializer):
 class RelationshipSerializer(ModelSerializer):
     class Meta:
         model = Relationship
-        fields=(
+        fields = (
             "pk",
             "from_person",
             "to_person",
@@ -143,4 +141,3 @@ class RelationshipSerializer(ModelSerializer):
 
     def create(self, validated_data):
         return Relationship.objects.create_friends(**validated_data)
-

@@ -14,8 +14,8 @@ RUN apt-get update \
   && apt-get install -y gettext \
   # versatileimage dependencies
   && apt-get install -y libmagic-dev \
-  # install netcat for port checking
-  && apt-get install -y netcat \
+  # postgres client install
+  && apt-get install -f -y postgresql-client \
   # install a pushpin server
   && apt-get install -y pushpin \
   # install opencv utilites

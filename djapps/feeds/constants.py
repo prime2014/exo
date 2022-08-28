@@ -11,7 +11,5 @@ class LikeChoice(Enum):
     Angry = 0
 
 
-
-
 if __name__ == "__main__":
     print(LikeChoice.__members__.items())

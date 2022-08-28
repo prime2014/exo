@@ -1,9 +1,7 @@
-from email import header
-from pickle import NONE
 import pytest
 from rest_framework.test import APIClient
 import logging
-import json
+
 
 logger = logging.getLogger(__name__)
 
@@ -28,13 +26,14 @@ def test_signup():
     assert resp.status_code == 201
 
 
-
-@pytest.mark.parametrize("email, password",[
-    ("deckered@show.com", "deckeredshow")
-])
-@pytest.mark.django_db(transaction=True)
-def test_login(email, password):
-    client = APIClient()
-    resp = client.post("/accounts/auth/login/", headers={"Content-Type": "application/json"}, data={"email": email, "password": password})
-    print(resp.data)
-    assert True == True
+# @pytest.mark.parametrize("email, password", [
+#     ("deckerd@show.com", "deckeredshow")
+# ])
+# @pytest.mark.django_db(transaction=True)
+# def test_login(email, password):
+#     client = APIClient()
+#     resp = client.post("/accounts/auth/login/", headers={"Content-Type": "application/json"},
+#                        data={"email": email, "password": password})
+#     logger.info(resp.data)
+#     assert resp.data["user"] == credentials
+#     assert resp.status_code == 200

@@ -7,7 +7,6 @@ from django.utils.http import urlsafe_base64_encode
 import redis
 
 
-
 @celery_app.task()
 def send_activation_link(token, user):
     """A celery task to send an account activation link to the user email"""
@@ -24,14 +23,14 @@ def send_activation_link(token, user):
     send_mail(
         "Account Activation",
         msg_html,
-        from_email= settings.DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[email],
         html_message=msg_html
     )
 
 
 @celery_app.task(serializer="json")
-def send_json_user_document(user:dict):
+def send_json_user_document(user: dict):
     pk = user.pop("pgpk")
     user.update({"pk": pk})
     try:

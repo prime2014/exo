@@ -3,7 +3,6 @@ from django.urls import path, include
 from djapps.feeds.api import (
     FeedGenericAPIView,
     FeedAPIDetail,
-    FeedAPIViewWrite,
     MediaViewset,
     TagsViewset,
     CommentViewset,
@@ -16,7 +15,6 @@ router = DefaultRouter()
 router.register("comments", viewset=CommentViewset, basename="comments")
 router.register("tags", viewset=TagsViewset, basename="tags")
 router.register("media", viewset=MediaViewset, basename="media")
-
 
 
 urlpatterns = [

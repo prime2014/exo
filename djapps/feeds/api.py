@@ -1,11 +1,8 @@
-from curses.ascii import HT
-from decimal import InvalidOperation
-from textwrap import indent
 from rest_framework.viewsets import ModelViewSet
 from djapps.feeds.models import Feed, Media, Tags, Comments
-from djapps.feeds.serializers import FeedSerializer, MediaSerializer, TagsSerializer,CommentSerializer
+from djapps.feeds.serializers import FeedSerializer, MediaSerializer, TagsSerializer, CommentSerializer
 from djapps.accounts.serializers import UserSerializer
-from rest_framework import authentication, permissions,status
+from rest_framework import authentication, permissions, status
 from django.contrib.auth import get_user_model
 import logging
 from rest_framework.exceptions import NotAuthenticated
@@ -14,25 +11,19 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import RetrieveUpdateDestroyAPIView,  ListCreateAPIView, ListAPIView
 from django.shortcuts import get_object_or_404
 from djapps.feeds.pagination import FeedCursorPagination
-from django.contrib.contenttypes.models import ContentType
-from notifications.signals import notify
 from django_filters.rest_framework import DjangoFilterBackend
 from djapps.feeds.filters import FilterUsersPost
-from django.core.cache import cache
 from rest_framework.views import APIView
-from rest_framework.renderers import JSONRenderer
 from djapps.feeds.posting import create_post
-import time, uuid, json
+import time
+import uuid
+import json
 from datetime import datetime, timezone
-from djapps.feeds.tasks import send_posts
-from rest_framework.parsers import FormParser, MultiPartParser
 from django.conf import settings
 import os
 from PIL import Image
 import secrets
 import mimetypes
-from moviepy.editor import VideoFileClip
-import cv2
 
 
 time.time()
@@ -54,17 +45,19 @@ class PostMedia(APIView):
         host = request.META["HTTP_HOST"]
         logger.info("META HOST: %s" % (host, ))
         type = mimetypes.guess_type(file.name, None)[0].split("/")[0]
-        name, ext =  os.path.splitext(file.name)
+        name, ext = os.path.splitext(file.name)
         if file and type == "image":
             try:
                 my_image = Image.open(file)
                 timestamp = secrets.token_urlsafe(8)
                 my_image.save(os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
                 # my_image.save(os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
-                url = str("http://127.0.0.1:8000/" + os.path.join(settings.MEDIA_ROOT, "content", f"{name}_{timestamp}{ext}"))
+                url = str("http://127.0.0.1:8000/" + os.path.join(settings.MEDIA_ROOT, "content",
+                                                                  f"{name}_{timestamp}{ext}"))
                 return Response({"file": f"{url}"}, status=status.HTTP_200_OK)
-            except IOError() as exc:
-                return Response ({"error": "There was a problem with your file upload"}, status=status.HTTP_400_BAD_REQUEST)
+            except IOError():
+                return Response({"error": "There was a problem with your file upload"},
+                                status=status.HTTP_400_BAD_REQUEST)
         elif file and type == "video":
             try:
                 timestamp = secrets.token_urlsafe(8)
@@ -72,10 +65,9 @@ class PostMedia(APIView):
                     for chunks in file.chunks():
                         destination.write(chunks)
                 return Response({"success": "file successfully submitted"}, status=status.HTTP_200_OK)
-            except IOError() as exc:
-                return Response ({"error": "There was a problem with your file upload"}, status=status.HTTP_400_BAD_REQUEST)
-
-
+            except IOError():
+                return Response({"error": "There was a problem with your file upload"},
+                                status=status.HTTP_400_BAD_REQUEST)
 
 
 class PostView(APIView):
@@ -85,9 +77,9 @@ class PostView(APIView):
     # def get(self, request, *args, **kwargs):
     #     request.user
 
-
     def post(self, request, *args, **kwargs):
-        user = UserSerializer(instance=request.user, context={"request": request}, fields=("pk", "first_name", "last_name", "avatar")).data
+        user = UserSerializer(instance=request.user, context={"request": request},
+                              fields=("pk", "first_name", "last_name", "avatar")).data
         pr = uuid.uuid4()
         pid = f"{pr}{int(round(time.time(), 0))}"
         tzed = timezone.utc
@@ -97,9 +89,8 @@ class PostView(APIView):
             posted["author"] = user
             # send_posts.chunk(list((pk, posted) for pk in list_of_friends), 300)()
             return Response(posted, status=status.HTTP_201_CREATED)
-        except Exception as exc:
+        except Exception:
             return Response({"error": "There was a problem creating your post!"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class TagsViewset(ModelViewSet):
@@ -107,7 +98,6 @@ class TagsViewset(ModelViewSet):
     authentication_classes = ()
     permission_classes = (permissions.AllowAny,)
     serializer_class = TagsSerializer
-
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -117,6 +107,7 @@ class TagsViewset(ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MediaViewset(ModelViewSet):
     queryset = Media.objects.all()
@@ -129,7 +120,8 @@ class MediaViewset(ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        serializers = self.serializer_class(data=request.data, context={"request": request}, many=isinstance(request.data, list))
+        serializers = self.serializer_class(data=request.data, context={"request": request},
+                                            many=isinstance(request.data, list))
         if serializers.is_valid(raise_exception=True):
             serializers.save()
             feed = Feed.objects.get(pk=serializers.data.get("post"))
@@ -149,7 +141,6 @@ class MediaViewset(ModelViewSet):
         return Response({"detail": "Successfully deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
-
 # class MediaView(RetrieveUpdateDestroyAPIView):
 #     authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
 #     parser_classes = (MultiPartParser, FormParser)
@@ -159,7 +150,6 @@ class MediaViewset(ModelViewSet):
 
 #     def retrieve(self, request, *args, **kwargs):
 #         self.parser_classes
-
 
 
 class FeedGenericAPIView(ListAPIView):
@@ -176,18 +166,15 @@ class FeedGenericAPIView(ListAPIView):
         if client.is_staff or client.is_superuser:
             return Feed.objects.all()
         elif client.is_authenticated:
-            users = set(client.relation.filter(to_user__status="Friends")).union({ client })
+            users = set(client.relation.filter(to_user__status="Friends")).union({client})
             qs = Feed.objects.select_related("author").prefetch_related("posted_photos", "tag").filter(author__in=users)
             return qs
         raise NotAuthenticated(detail="You need to be authenticated to view the feed", code=401)
-
-
 
     # def get(self, request, *args, **kwargs):
     #     feed = self.get_queryset()
     #     serializer = self.serializer_class(feed, many=True, context={"request": request})
     #     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
@@ -197,12 +184,10 @@ class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
         if serializers.is_valid(raise_exception=True):
             self.perform_create(serializers)
             # send_post_data(request.user.username, serializers.data)
-            feed = Feed.objects.filter(author=request.user).latest('pub_date');
-            # notify.send(feed.author, recipient=feed.author, verb="POST CREATED", action_object=feed, description=f"{feed.author.first_name} {feed.author.last_name} created a post")
+            Feed.objects.filter(author=request.user).latest('pub_date')
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
@@ -220,7 +205,8 @@ class FeedAPIDetail(RetrieveUpdateDestroyAPIView, FeedGenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def update(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.get_object(), data=request.data, context={"request": request}, partial=True)
+        serializer = self.serializer_class(self.get_object(), data=request.data,
+                                           context={"request": request}, partial=True)
 
         if serializer.is_valid(raise_exception=True):
             serializer.save(author=request.user)
@@ -251,5 +237,3 @@ class CommentViewset(ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
-
-

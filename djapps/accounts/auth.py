@@ -20,4 +20,3 @@ class Authentication(ModelBackend):
 
     def get_user(self, user_id):
         return super().get_user(user_id)
-

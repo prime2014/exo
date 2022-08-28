@@ -1,13 +1,8 @@
-from email.policy import default
-from statistics import multimode
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-
-
 
 
 User = get_user_model()
@@ -58,7 +53,6 @@ class Feed(models.Model):
         null=True
     )
 
-
     class Meta:
         ordering = ("-pub_date", )
         indexes = [
@@ -66,7 +60,7 @@ class Feed(models.Model):
         ]
 
     def __str__(self):
-        return self.author.username  + " POST"
+        return self.author.username + " POST"
 
 
 class Media(models.Model):
@@ -115,9 +109,3 @@ class Comments(models.Model):
 
     # def set_like_choice(self, choice):
     #     if choice in set()
-
-
-
-
-
-

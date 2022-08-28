@@ -1,15 +1,6 @@
 import redis
 from redis.commands.graph.node import Node
-from redis.commands.graph.edge import Edge
-from redis.commands.parser import CommandsParser
-from redis.exceptions import ConnectionError
-from typing import Union
 from string import Template
-import json, random
-import time, uuid
-import math
-from django.contrib.sessions.backends.db import SessionStore
-
 
 
 class RedisConnectionAbstract(object):
@@ -36,7 +27,7 @@ class UserCrudOperations(RedisConnectionAbstract):
         '''logs out a user session from the redis database'''
         pass
 
-    def get_user_object(self, pk:int)->Node:
+    def get_user_object(self, pk: int) -> Node:
         '''Gets a single user object as a node from the database'''
         template = Template("MATCH (p1:Person {pgpk: $pk}) RETURN p1")
         query = template.substitute(pk=pk)
@@ -48,12 +39,11 @@ class UserCrudOperations(RedisConnectionAbstract):
         except redis.ReadOnlyError as exc:
             raise exc
 
-    def get_users(self)-> list:
+    def get_users(self) -> list:
         '''Gets a list of users from the database'''
         pass
 
-
-    def create_user(self, user:dict)-> dict:
+    def create_user(self, user: dict) -> dict:
         '''functionality for creating a user on redis'''
 
         user_pk = user.get("pk")
@@ -69,7 +59,8 @@ class UserCrudOperations(RedisConnectionAbstract):
                             CREATE SET p1.username='$pname', p1.first_name= '$first_name', \
                             p1.is_active = '$is_active', p1.meta = '$meta', p1.avatar= '$avatar', \
                             p1.last_name='$last_name', p1.pgpk=$user_pk, p1.email='$email' RETURN p1")
-        query = template.substitute(pname=pname, first_name=first_name, last_name=last_name, user_pk=user_pk, is_active=is_active, meta=meta, avatar=avatar, email=email)
+        query = template.substitute(pname=pname, first_name=first_name, last_name=last_name,
+                                    user_pk=user_pk, is_active=is_active, meta=meta, avatar=avatar, email=email)
         print(query)
         try:
             result = self.social_graph.query(query).result_set
@@ -79,31 +70,31 @@ class UserCrudOperations(RedisConnectionAbstract):
         except redis.ReadOnlyError:
             raise "There was an error finding the user"
 
-    def update_user(self, user:dict)-> dict:
+    def update_user(self, user: dict) -> dict:
         '''functionality to update an existing user in the database'''
         pass
 
-    def delete_user(self, user: dict)-> dict:
+    def delete_user(self, user: dict) -> dict:
         '''functionality to delete a user from the database'''
         pass
 
-    def get_followers(self, pk:int) -> list:
+    def get_followers(self, pk: int) -> list:
         '''gets a list of users who are following the requesting user'''
         pass
 
     def add_friend(self, pk, friend_pk):
         try:
-            template = Template("MATCH (p1:Person {pgpk: $pk}), (p2:Person {pgpk: $friend_pk}) CREATE (p1)-[:friends_with]->(p2), (p2)-[:friends_with]->(p1) RETURN p2")
+            template = Template("MATCH (p1:Person {pgpk: $pk}), (p2:Person {pgpk: $friend_pk}) \
+                                CREATE (p1)-[:friends_with]->(p2), (p2)-[:friends_with]->(p1) RETURN p2")
             query = template.substitute(pk=pk, friend_pk=friend_pk)
             result = self.social_graph.query(query).result_set
             user_result = [setObject(rec[0].properties, rec[0].id) for rec in result]
             return user_result[0]
-        except Exception() as exc:
+        except Exception():
             raise "There was a problem with your request"
 
     def block_friend(self, owner, other):
         pass
-
 
 
 rconn_user = UserCrudOperations()
@@ -111,4 +102,3 @@ rconn_user = UserCrudOperations()
 
 if __name__ == "__main__":
     rconn_user.add_friend(pk=59, friend_pk=60)
-

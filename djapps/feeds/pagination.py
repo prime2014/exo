@@ -8,7 +8,6 @@ class PaginateFeedPage(PageNumberPagination):
     max_page_size = 24
 
 
-
 class FeedCursorPagination(CursorPagination):
     cursor_query_param = "cursor"
     cursor_query_desription = _("The pagination cursor value.")

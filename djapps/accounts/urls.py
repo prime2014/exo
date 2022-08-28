@@ -1,4 +1,3 @@
-from email.mime import base
 from django.urls import path, include
 from djapps.accounts.api import (
     LoginAPIView,

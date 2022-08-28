@@ -1,13 +1,12 @@
-from distutils.command.upload import upload
-from statistics import mode
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.db.models import Q, F
-from versatileimagefield.fields import VersatileImageField,PPOIField
+from versatileimagefield.fields import VersatileImageField, PPOIField
 from versatileimagefield.image_warmer import VersatileImageFieldWarmer
 from django.dispatch import receiver
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, is_active=False, **extra_kwargs):
@@ -51,14 +50,14 @@ class User(AbstractBaseUser):
     username = models.CharField(
         max_length=30,
         unique=True,
-        null = False
+        null=False
     )
     avatar = models.CharField(
         max_length=225,
         null=True,
         blank=True
     )
-    first_name= models.CharField(
+    first_name = models.CharField(
         max_length=30,
         null=True
     )
@@ -85,7 +84,7 @@ class User(AbstractBaseUser):
         default=timezone.now,
         editable=False
     )
-    date_modified=models.DateTimeField(
+    date_modified = models.DateTimeField(
         auto_now=True,
         editable=False
     )
@@ -108,7 +107,7 @@ class User(AbstractBaseUser):
                 to_user__status__in=[*status]
             )
         return self.relation.filter(
-            to_user__status = status
+            to_user__status=status
         )
 
     def has_perm(self, perm, obj=None):
@@ -121,7 +120,7 @@ class User(AbstractBaseUser):
 class ProfileImages(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="avatars")
     image = VersatileImageField(
-        upload_to=f"profile/",
+        upload_to="profile/",
         width_field="width",
         height_field="height"
     )
@@ -149,11 +148,11 @@ class RelationshipManager(models.Manager):
     def create_friends(self, from_person, to_person, status="Friends"):
         relation_one = self.model(
             from_person=to_person,
-            to_person= from_person,
+            to_person=from_person,
             status=status
         )
-        relation_two= self.model(
-            from_person = from_person,
+        relation_two = self.model(
+            from_person=from_person,
             to_person=to_person,
             status=status
         )
@@ -170,7 +169,7 @@ class Relationship(models.Model):
         ('Friends', _('Friends')),
         ('Following', _('Following')),
         ('Followers', _('Followers')),
-        ('Blocked',_('Blocked'))
+        ('Blocked', _('Blocked'))
     ]
     from_person = models.ForeignKey(
         User,
@@ -182,7 +181,7 @@ class Relationship(models.Model):
         on_delete=models.CASCADE,
         related_name="to_user"
     )
-    status= models.CharField(
+    status = models.CharField(
         max_length=20,
         choices=CHOICES,
         default="Friends"
@@ -207,7 +206,6 @@ class Relationship(models.Model):
         ]
 
 
-
 @receiver(models.signals.post_save, sender=ProfileImages)
 def warm_profile_images(sender, instance, **kwargs):
     """Ensures Person head shots are created post-save"""
@@ -222,4 +220,3 @@ def warm_profile_images(sender, instance, **kwargs):
         image_attr='image'
     )
     num_created, failed_to_create = person_img_warmer.warm()
-

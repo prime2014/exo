@@ -1,5 +1,3 @@
-from codecs import lookup
-from wsgiref.util import request_uri
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import APIView
 from djapps.accounts.auth import Authentication
@@ -11,20 +9,16 @@ from djapps.accounts.serializers import (
     RelationshipSerializer,
     ProfileImageSerializer
 )
-from rest_framework import status,permissions
+from rest_framework import status, permissions
 from djapps.accounts.utils import activation_token
 from djapps.accounts.tasks import send_activation_link
 from djapps.accounts.models import (
     Relationship,
     ProfileImages
 )
-from rest_framework import authentication, permissions, status
+from rest_framework import authentication
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from django.views.decorators.vary import vary_on_headers
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-from notifications.signals import notify
 from django_filters.rest_framework import DjangoFilterBackend
 from djapps.accounts.filters import FriendFilter
 from djapps.accounts.reconstruct_on_redis import rconn_user
@@ -41,19 +35,23 @@ logging.basicConfig(format="%(asctime)s %(levelname)s %(message)s", encoding="ut
 
 logger = logging.getLogger(__name__)
 
+
 class LoginAPIView(APIView):
     authentication_classes = ()
     permission_classes = ()
     serializer_class = LoginSerializer
 
-    def post(self,request,**kwargs):
+    def post(self, request, **kwargs):
         email = request.data.get("email")
-        password= request.data.get("password")
+        password = request.data.get("password")
         try:
             user = authenticate.authenticate(request, username=email, password=password)
-            if user: login(request, user)
-            else: raise User.DoesNotExist
-            return Response({'token': user.auth_token.key, 'user': UserSerializer(user, context={"request": request}).data}, status=status.HTTP_200_OK)
+            if user:
+                login(request, user)
+            else:
+                raise User.DoesNotExist
+            return Response({'token': user.auth_token.key, 'user': UserSerializer(user,
+                            context={"request": request}).data}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'Invalid User Credentials!'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -106,7 +104,8 @@ class UserViewset(ModelViewSet):
                 send_json_user_document.delay(user)
                 return Response(active_user, status=status.HTTP_200_OK)
             else:
-                return Response({"error": "Invalid token! Cannot activate user account"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "Invalid token! Cannot activate user account"},
+                                status=status.HTTP_400_BAD_REQUEST)
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
     @action(methods=["POST"], detail=True)
@@ -117,8 +116,8 @@ class UserViewset(ModelViewSet):
             friend_pk = data.get("pk")
             send_event(f"user-{friend_pk}", "friend_request_notification", user)
             return Response({"success": "Your friend request has been sent"}, status=status.HTTP_200_OK)
-        except Exception() as exc:
-            return Response ({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception():
+            return Response({"error": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileImagesViewset(ModelViewSet):
@@ -138,6 +137,7 @@ class ProfileImagesViewset(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
 
 class RelationshipViewset(ModelViewSet):
     queryset = Relationship.objects.all().select_related("from_person", "to_person")

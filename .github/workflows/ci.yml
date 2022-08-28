@@ -61,8 +61,10 @@ jobs:
           if [ ! -f .env ]; then touch ./.env; fi
 
       - name: Lint with flake8
+        container:
+          image: docker://prime2014/elope_django
         run: |
-          docker-compose -f local.yml run --rm django flake8 --statistics
+          docker-compose -f staging.yml run --rm django flake8 --statistics
 
   pytest:
     name: pytest
@@ -72,7 +74,7 @@ jobs:
       django:
         image: docker://prime2014/elope_django
         ports:
-          - 8080:8080
+          - 8000:8000
 
       postgres:
         image: docker://postgres:12
@@ -99,5 +101,7 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
+        container:
+          image: docker://prime2014/elope_django
         run: |
           docker-compose -f staging.yml run --rm django pytest

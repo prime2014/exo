@@ -38,11 +38,6 @@ jobs:
         ports:
           - 6379/tcp
 
-      django:
-        image: docker://prime2014/elope_django
-        ports:
-          - 8000:8000
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -80,11 +75,6 @@ jobs:
         image: docker://redislabs/redismod
         ports:
           - 6379/tcp
-
-      django:
-        image: docker://prime2014/elope_django
-        ports:
-          - 8000:8000
 
     defaults:
       run:

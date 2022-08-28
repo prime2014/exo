@@ -30,7 +30,8 @@ jobs:
     services:
       postgres:
         image: docker://postgres:12
-        ports: 5432:5432
+        ports:
+          - 5432:5432
 
       redis:
         image: docker://redislabs/redismod
@@ -75,7 +76,7 @@ jobs:
         ports:
           - 5432:5432
 
-      redis:
+      redisModules:
         image: docker://redislabs/redismod
         ports:
           - 6379/tcp

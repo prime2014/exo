@@ -33,7 +33,7 @@ services:
     env_file:
       - ./.env
     environment:
-      - DJANGO_SETTINGS_MODULE: config.settings.base
+      DJANGO_SETTINGS_MODULE: config.settings.base
     command: >
       /bin/bash -c "python manage.py makemigrations
                     python manage.py migrate

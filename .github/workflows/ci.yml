@@ -48,7 +48,7 @@ jobs:
 
       - name: Lint with flake8
         run: |
-          docker-compose -f staging.yml run --entrypoint /bin/bash --rm django flake8 --statistics
+          docker-compose -f staging.yml run --rm django flake8 --statistics
 
   pytest:
     name: pytest
@@ -73,4 +73,4 @@ jobs:
       - name: Test Code with pytest
 
         run: |
-          docker-compose -f staging.yml run --entrypoint /bin/bash --rm django pytest
+          docker-compose -f staging.yml run --rm django pytest

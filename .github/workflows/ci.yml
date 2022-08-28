@@ -27,6 +27,20 @@ jobs:
       run:
         shell: bash
 
+    services:
+      django:
+        image: docker://prime2014/elope_django
+        ports:
+          - 8080:8080
+
+      postgres:
+        image: docker://postgres:12
+
+      redis:
+        image: docker://redislabs/redismod
+        ports:
+          - 6379/tcp
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

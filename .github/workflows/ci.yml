@@ -47,6 +47,8 @@ jobs:
           if [ ! -f .env ]; then touch ./.env; fi
 
       - name: Lint with flake8
+        with:
+          entrypoint: ""
         run: |
           docker-compose -f staging.yml run --rm django flake8 --statistics
 
@@ -71,5 +73,7 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
+        with:
+          entrypoint: ""
         run: |
           docker-compose -f staging.yml run --rm django pytest

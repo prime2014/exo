@@ -6,7 +6,7 @@
 
 check_database(){
 
-    while [ ! nc -zv ${POSTGRES_HOST} ${POSTGRES_PORT} ]
+    while [[ ! nc -zv ${POSTGRES_HOST} ${POSTGRES_PORT} ]]
     do
         echo "Waiting for database to initialize..."
         sleep 4

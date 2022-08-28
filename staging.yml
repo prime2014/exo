@@ -32,7 +32,7 @@ services:
       - .:/exo
     env_file:
       - ./.env
-    emvironment:
+    environment:
       - DJANGO_SETTINGS_MODULE: config.settings.base
     command: >
       /bin/bash -c "python manage.py makemigrations

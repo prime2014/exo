@@ -23,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     name: flake8
 
+    container:
+      image: docker://prime2014/elope_django
+
     defaults:
       run:
         shell: bash
@@ -61,14 +64,15 @@ jobs:
           if [ ! -f .env ]; then touch ./.env; fi
 
       - name: Lint with flake8
-        container:
-          image: docker://prime2014/elope_django
         run: |
           docker-compose -f staging.yml run --rm django flake8 --statistics
 
   pytest:
     name: pytest
     runs-on: ubuntu-latest
+
+    container:
+      image: docker://prime2014/elope_django
 
     services:
       django:
@@ -89,6 +93,7 @@ jobs:
         shell: bash
 
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -101,7 +106,6 @@ jobs:
           pip install pytest
 
       - name: Test Code with pytest
-        container:
-          image: docker://prime2014/elope_django
+
         run: |
           docker-compose -f staging.yml run --rm django pytest

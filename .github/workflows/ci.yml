@@ -30,11 +30,17 @@ jobs:
     services:
       postgres:
         image: docker://postgres:12
+        ports: 5432:5432
 
       redis:
         image: docker://redislabs/redismod
         ports:
           - 6379/tcp
+
+      django:
+        image: docker://prime2014/elope_django
+        ports:
+          - 8000:8000
 
     steps:
       - name: Checkout code
@@ -44,10 +50,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-
-      - name: develop a container for it
-        uses: docker://prime2014/elope_django
-
 
       - name: Install dependencies
         run: |
@@ -70,11 +72,18 @@ jobs:
     services:
       postgres:
         image: docker://postgres:12
+        ports:
+          - 5432:5432
 
       redis:
         image: docker://redislabs/redismod
         ports:
           - 6379/tcp
+
+      django:
+        image: docker://prime2014/elope_django
+        ports:
+          - 8000:8000
 
     defaults:
       run:

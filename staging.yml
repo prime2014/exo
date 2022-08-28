@@ -32,7 +32,6 @@ services:
       - .:/exo
     env_file:
       - ./.env
-    entrypoint: /bin/bash
     command: >
       /bin/bash -c "python manage.py makemigrations
                     python manage.py migrate

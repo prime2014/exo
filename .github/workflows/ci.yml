@@ -27,17 +27,6 @@ jobs:
       run:
         shell: bash
 
-    services:
-      postgres:
-        image: docker://postgres:12
-        ports:
-          - 5432:5432
-
-      redis:
-        image: docker://redislabs/redismod
-        ports:
-          - 6379/tcp
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -65,23 +54,11 @@ jobs:
     name: pytest
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: docker://postgres:12
-        ports:
-          - 5432:5432
-
-      redisModules:
-        image: docker://redislabs/redismod
-        ports:
-          - 6379/tcp
-
     defaults:
       run:
         shell: bash
 
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v2
 

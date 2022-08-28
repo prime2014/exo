@@ -21,7 +21,7 @@ constantly==15.1.0
 cryptography==37.0.4
 cssselect2==0.6.0
 daphne==3.0.2
-decorator==4.4.2
+decorator==5.1.1
 Deprecated==1.2.13
 Django==4.0.7
 django-celery-beat==2.3.0
@@ -46,6 +46,7 @@ django-timezone-field==5.0
 django-versatileimagefield==2.2
 djangorestframework==3.13.1
 easy-thumbnails==2.8.3
+flake8==5.0.4
 gripcontrol==4.1.0
 gunicorn==20.1.0
 hiredis==2.0.0
@@ -59,6 +60,7 @@ jsonfield==3.1.0
 kombu==5.2.4
 lxml==4.9.1
 MarkupSafe==2.1.1
+mccabe==0.7.0
 moviepy==1.0.3
 msgpack==1.0.4
 numpy==1.23.2
@@ -73,7 +75,9 @@ pubcontrol==3.3.0
 py==1.11.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
+pycodestyle==2.9.1
 pycparser==2.21
+pyflakes==2.5.0
 PyJWT==2.4.0
 pyOpenSSL==22.0.0
 pyparsing==3.0.9

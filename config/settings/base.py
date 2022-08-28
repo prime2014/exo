@@ -112,7 +112,7 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {'default': env.db("POSTGRES_URL", default="postgres://testuser:tespassword@postgres:5432/exodb")}
+DATABASES = {'default': env.db("POSTGRES_URL", default="postgres://samurai:binaryXpro@postgres:5432/exodb")}
 
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 

@@ -68,7 +68,11 @@ class Feed extends Component {
     }
 
 
-    let events = new EventSource(`http://127.0.0.1:8000/events/?channel=user-${this.props.user.pk}`)
+    let events = new EventSource(`http://127.0.0.1:8000/events/?channel=user-${this.props.user.pk}`, {
+      headers: {
+        "Authorization": `Token ${this.props.user.token}`
+      }
+    })
 
     events.addEventListener("status_update", (event)=>{
       console.log(event.data);

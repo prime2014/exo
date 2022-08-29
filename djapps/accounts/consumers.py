@@ -3,9 +3,6 @@ from channels.generic.websocket import WebsocketConsumer
 import logging
 from asgiref.sync import async_to_sync
 
-
-logging.basicConfig(encoding="utf-8", level=logging.INFO, format="%(asctime)s %(module)s %(level)s %(message)s")
-
 logger = logging.getLogger(__name__)
 
 

@@ -266,7 +266,7 @@ EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
 EVENTSTREAM_ALLOW_ORIGIN = 'http://localhost:3000'
 EVENTSTREAM_ALLOW_CREDENTIALS = True
 EVENTSTREAM_ALLOW_HEADERS = 'Authorization'
-EVENTSTREAM_CHANNELMANAGER_CLASS = "djapps.events.authentication.MyChannelManager"
+
 
 LOGGING = {
     'version': 1,

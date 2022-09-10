@@ -10,9 +10,9 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.generics import RetrieveUpdateDestroyAPIView,  ListCreateAPIView, ListAPIView
 from django.shortcuts import get_object_or_404
-from djapps.feeds.pagination import FeedCursorPagination
+from djapps.feeds.pagination import FeedCursorPagination, CommentPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from djapps.feeds.filters import FilterUsersPost
+from djapps.feeds.filters import FilterUsersPost, CommentFilter
 from rest_framework.views import APIView
 from djapps.feeds.posting import create_post
 import time
@@ -24,6 +24,7 @@ import os
 from PIL import Image
 import secrets
 import mimetypes
+import redgrease
 
 
 time.time()
@@ -78,6 +79,7 @@ class PostView(APIView):
     #     request.user
 
     def post(self, request, *args, **kwargs):
+        conn = redgrease.Redis(host="redisModules", port=6379, db=0)
         user = UserSerializer(instance=request.user, context={"request": request},
                               fields=("pk", "first_name", "last_name", "avatar")).data
         pr = uuid.uuid4()
@@ -85,6 +87,7 @@ class PostView(APIView):
         tzed = timezone.utc
         request.data.update({"uuid": pid, "author": json.dumps(user), "pub_date": str(datetime.now(tzed))})
         try:
+            conn.hmset()
             posted = create_post(user.get("pk"), request.data)
             posted["author"] = user
             # send_posts.chunk(list((pk, posted) for pk in list_of_friends), 300)()
@@ -137,6 +140,7 @@ class MediaViewset(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         media = get_object_or_404(Media, pk=kwargs.get("pk"))
+        media.file.delete(save=True)
         media.delete()
         return Response({"detail": "Successfully deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -183,7 +187,6 @@ class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
         serializers = self.serializer_class(data=request.data, context={"request": request})
         if serializers.is_valid(raise_exception=True):
             self.perform_create(serializers)
-            # send_post_data(request.user.username, serializers.data)
             Feed.objects.filter(author=request.user).latest('pub_date')
             return Response(serializers.data, status=status.HTTP_201_CREATED)
         else:
@@ -194,7 +197,6 @@ class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
 
 
 class FeedAPIDetail(RetrieveUpdateDestroyAPIView, FeedGenericAPIView):
-    parser_classes = (MultiPartParser, FormParser)
     serializer_class = FeedSerializer
     authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated, )
@@ -220,20 +222,23 @@ class FeedAPIDetail(RetrieveUpdateDestroyAPIView, FeedGenericAPIView):
         return Response({"detail": "Successfully deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 
-class CommentViewset(ModelViewSet):
+class CommentViewset(ListCreateAPIView):
     queryset = Comments.objects.all()
     authentication_classes = (authentication.SessionAuthentication, authentication.TokenAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = CommentSerializer
+    pagination_class = CommentPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = CommentFilter
 
     def create(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={"request": request})
 
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        return serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user)

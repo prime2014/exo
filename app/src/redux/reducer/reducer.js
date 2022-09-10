@@ -56,6 +56,24 @@ export const feedReducer = (
           feed: [action.payload, ...state.feed]
         }
         return state;
+      case actionTypes.EDIT_POST:
+        let posts = state.feed;
+        let ids = posts.findIndex(item=> item.id === action.payload.id)
+        posts.splice(ids, 1, action.payload)
+        state = {
+          ...state,
+          feed: posts
+        }
+        return state;
+      case actionTypes.DELETE_POST:
+        let sposts = state.feed;
+        let index = sposts.findIndex(item=> item.id === action.payload)
+        sposts.splice(index, 1)
+        state = {
+          ...state,
+          feed: sposts
+        }
+        return state;
       default:
         return state;
     }

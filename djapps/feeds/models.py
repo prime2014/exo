@@ -67,6 +67,7 @@ class Media(models.Model):
     file = models.FileField(
         upload_to="content/"
     )
+
     post = models.ForeignKey(
         Feed,
         null=True,

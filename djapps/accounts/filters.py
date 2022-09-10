@@ -7,8 +7,9 @@ User = get_user_model()
 
 class FriendFilter(filters.FilterSet):
     first_name = filters.CharFilter(lookup_expr="icontains")
-    realtionship__to_user__first_name = F(first_name)
-    realtionship__from_user = filters.NumberFilter()
+    # realtionship__from_user__to_person__first_name = F(first_name)
+    realtionship__from_user__to_person__first_name = F(first_name)
+    realtionship__from_user__from_person__id = filters.NumberFilter()
     realtionship__to_user__status = "Friends"
 
     class Meta:

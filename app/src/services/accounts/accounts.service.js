@@ -110,7 +110,7 @@ const getUserProfile = async id => {
 const searchFriends = async (first_name, user_id) => {
   try {
     let friends = null;
-    let response = await axios.get(`/accounts/api/v1/users/?first_name=${first_name}&realtionship__from_user=${user_id}`, {
+    let response = await axios.get(`/accounts/api/v1/users/?first_name=${first_name}&realtionship__from_user__from_person__id=${user_id}`, {
       headers: {
         'Content-Type': 'application/json',
         'authorization': `Token ${store.getState().userReducer.token}`

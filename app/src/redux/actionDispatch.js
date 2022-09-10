@@ -3,7 +3,8 @@ import { feedAPI } from "../services/feed/feed.service";
 import {
   setUserCredentials,
   setFeeds,
-  addFeed
+  addFeed,
+  deleteUserPost
 } from "./actions";
 
 
@@ -58,5 +59,14 @@ export const fetchNextBatch = url => {
   }
 }
 
-
-
+export const deletePostStatus = id => {
+  return async dispatch => {
+    try {
+      let response = await feedAPI.deletePost(id);
+      if(response === 204) dispatch(deleteUserPost(id));
+      return response;
+    } catch(error){
+      return error;
+    }
+  }
+}

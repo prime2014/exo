@@ -29,3 +29,17 @@ export const addPostContent = payload => {
     payload
   }
 }
+
+export const editPostContent = payload => {
+  return {
+    type: actionTypes.EDIT_POST,
+    payload
+  }
+}
+
+export const deleteUserPost = id => {
+    return {
+      type: actionTypes.DELETE_POST,
+      payload: id
+    }
+}

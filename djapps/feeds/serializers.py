@@ -4,6 +4,7 @@ from djapps.feeds.models import Feed, Media, Tags, Comments
 from djapps.accounts.serializers import FeedAuthor
 import logging
 from django.contrib.auth import get_user_model
+from djapps.accounts.serializers import UserSerializer
 
 
 User = get_user_model()
@@ -70,11 +71,12 @@ class MediaSerializer(DynamicModelSerializer):
 
 
 class FeedForMedia(serializers.ModelSerializer):
+
     class Meta:
         model = Media
         fields = (
             "id",
-            "file"
+            "file",
         )
 
 
@@ -84,6 +86,7 @@ class FeedSerializer(DynamicModelSerializer):
     )
     tag = TagsSerializer(instance=Tags.objects.all(), many=True)
     posted_photos = FeedForMedia(read_only=True, many=True)
+    comment_count = serializers.SerializerMethodField(method_name="comment_count_number")
 
     class Meta:
         model = Feed
@@ -95,8 +98,9 @@ class FeedSerializer(DynamicModelSerializer):
 
     def to_representation(self, instance):
         result = super().to_representation(instance)
-        # result['author'] = FeedAuthor(instance=instance.author, context={"request": request}).data
-        result["author"] = dict(instance.values("pk", "first_name", "last_name", "username", "avatar"))
+        request = self.context.get("request")
+        result['author'] = FeedAuthor(instance=instance.author, context={"request": request}).data
+        # result["author"] = dict(instance.values("pk", "first_name", "last_name", "username", "avatar"))
         return result
 
     def create(self, validated_data):
@@ -108,6 +112,9 @@ class FeedSerializer(DynamicModelSerializer):
             return feed
         return self.Meta.model.objects.create(**validated_data)
 
+    def comment_count_number(self, obj):
+        return obj.post_comments.count()
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(
@@ -117,6 +124,14 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comments
         fields = "__all__"
+
+    def to_representation(self, instance):
+        comment = super().to_representation(instance)
+        request = self.context.get("request")
+        comment["author"] = UserSerializer(instance=instance.author,
+                                           context={"request": request},
+                                           fields=["pk", "first_name", "last_name", "avatar"]).data
+        return comment
 
     def create(self, validated_data):
         comment = self.Meta.model(**validated_data)

@@ -51,7 +51,7 @@ const Profile = props => {
 
   window.onscroll = ()=>{
     if(profileBannerRef.current.getBoundingClientRect().bottom <= 115){
-      document.getElementsByClassName("showupMenu")[0].style.zIndex = 120;
+      document.getElementsByClassName("showupMenu")[0].style.zIndex = 1150;
       document.getElementsByClassName("showupMenu")[0].style.display = "block";
       document.getElementsByClassName("showupMenu")[0].style.opacity = 1;
       document.getElementsByClassName("showupMenu")[0].style.transition = "opacity 0.8s ease-in-out";
@@ -131,10 +131,9 @@ const Profile = props => {
       <div className="profileWrapper">
         <div className="showupMenu" style={{ padding:"10px 0", backgroundColor:"#fff" }}>
           <div className="popoo">
-            <div>
+            <div style={{ display:"flex", justifyContent:"center" }}>
               <div>
                 <img src={profile.avatar} style={{ width:"40px", height:"40px", borderRadius:"50%", objectFit:"cover" }} alt="profile" />
-
               </div>
 
               <span>{profile.first_name} {profile.last_name}</span>

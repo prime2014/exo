@@ -1107,7 +1107,7 @@ body {
   position:sticky;
   top: 0;
   left: 0;
-  z-index: 700;
+  z-index: 1200;
   justify-content: space-between;
   align-items: center;
 }
@@ -1144,6 +1144,26 @@ body {
   width: 35px;
   height:35px;
   border-radius:50%;
+  font-size: 20px;
+}
+
+.hidePostMenu {
+  display: none;
+}
+
+.menuExpanding {
+  position: relative;
+}
+
+.postMenuCard {
+  position: absolute;
+  top:0;
+}
+
+.expand > * {
+  font-size: 20px;
+  margin: 0;
+  padding: 0
 }
 
 @keyframes reduce {
@@ -1159,11 +1179,6 @@ body {
 }
 
 
-
-.expand > span {
-  display: inline-block;
-  margin: 0 auto;
-}
 
 
 
@@ -1409,7 +1424,7 @@ body {
   background-color: #fff;
   box-shadow: 1px 1px 7px 1px rgb(153, 153, 153, .2);
   border-radius: 5px;
-  z-index: 99;
+  z-index: 1100;
 }
 
 .postMenu li {
@@ -1418,11 +1433,14 @@ body {
   display: flex;
   align-items: flex-start;
   padding: 10px 5px;
+  cursor: pointer;
 }
+
 
 .postMenu li:hover {
   background-color: #f4f4f4;
   border-radius: 5px;
+
 }
 
 .postMenu li > span {
@@ -1543,31 +1561,57 @@ body {
 }
 
 .commentList > li {
+  position: relative;
   list-style-type: none;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   margin-bottom: 15px;
 }
 
-.commentList > li > span {
+.editComment {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  z-index: 100;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.editComment:hover {
+  background-color: #d4d4d4;
+
+}
+
+.commentList > li > span:first-child {
   padding-top:8px;
   margin-left: 10px;
   padding-bottom:8px;
   padding-left:12px;
   padding-right:12px;
   display: inline-flex;
-  flex-direction: column;
   align-items: flex-start;
   background-color: #F0F2F5;
   border-radius: 15px;
+
 }
 
+.commentList > li > span:first-child > span {
+  display: flex;
+  flex-direction: column;
 
-.commentList > li > span > span:first-child {
+}
+
+.commentList > li > span:first-child > span > span:first-child{
   font-weight: 600;
   font-size: .8125rem;
   color: #050505;
 }
+
 
 
 .imgTemplate {
@@ -1855,10 +1899,9 @@ body {
 
 .carousel-container {
   padding:10px 10px;
-  overflow-x: auto;
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  /* justify-content: space-evenly; */
+  align-items: flex-start;
 }
 
 
@@ -1882,6 +1925,7 @@ body {
   border-radius: 10px;
   height: 280px;
   width: 300px !important;
+  min-width:200px;
   padding-bottom: 10px;
   margin: 0 5px;
   border: 1px solid #e6ecf5;
@@ -2120,9 +2164,46 @@ body {
   height: 40px;
   align-items: center;
   position: absolute;
-  right:35px;
-  top:10px;
+  right:10px;
+  bottom:0px;
   /* z-index: 99; */
+}
+
+.commentCount, .shareCount {
+  cursor: pointer;
+}
+
+.commentCount:hover, .shareCount:hover {
+  text-decoration: underline;
+}
+
+.textareaWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.textareaWrap textarea {
+  width: 100%;
+}
+
+
+.promptComment {
+  margin: 0 15px;
+  padding: 0;
+  color: #1A1A1D;
+  padding: 5px 0;
+  font-size: 12px;
+}
+
+.commentSections {
+  padding-right: 100px;
+}
+
+.filler {
+  display: inline-block;
+  width: 150px;
+  visibility: hidden;
 }
 
 .commentIco > span {
@@ -2156,7 +2237,7 @@ body {
   z-index: 99;
 }
 
-.postOwner span:first-child {
+.postOwner span:first-child > a {
   font-size: 15px;
   color: darkslateblue;
   font-weight: bold;
@@ -2767,6 +2848,7 @@ body {
   width: 100%;
   z-index: -1;
   box-shadow: 2px 2px 5px #ccc;
+
 }
 
 .hideEmoji {

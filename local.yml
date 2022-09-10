@@ -34,6 +34,7 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    mem_limit: 300m
     networks:
       - exo-net
 
@@ -58,6 +59,7 @@ services:
       sh -c "npm start"
     depends_on:
       - django
+    mem_limit: 2000m
     networks:
       - exo-net
 
@@ -68,6 +70,7 @@ services:
       - '8001:8001'
     volumes:
       - ./insights:/db
+    mem_limit: 100m
     networks:
       - exo-net
 
@@ -96,6 +99,7 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    mem_limit: 300m
     networks:
       - exo-net
 
@@ -111,6 +115,7 @@ services:
     depends_on:
       - postgres
       - redisModules
+    mem_limit: 300m
     networks:
       - exo-net
 
@@ -121,6 +126,7 @@ services:
       - "1025:1025"  # SMTP Server
       - "8025:8025"  # Browsable view of mailhog UI
     restart: unless-stopped
+    mem_limit: 300m
     networks:
       - exo-net
 

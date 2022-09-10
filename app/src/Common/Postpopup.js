@@ -44,6 +44,7 @@ const PostPopup = props => {
   const [postSection, setPostSection] = useState("postWrite");
   const [base,setBase] = useState(postContent);
   const [file, setFile] = useState(null);
+  const [success, setSuccess] = useState(false)
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [preview, setPreview] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -77,6 +78,25 @@ const PostPopup = props => {
     props.close();
   }
 
+  const uploadMedia = async (content, array) => {
+    await axios.post(process.env.REACT_APP_API_URL + "/feeds/api/v1/post/media/", content, {
+      headers : {
+        "Content-Type": "multipart/form-data",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    }).then(resp=>{
+
+      if(resp.data["posted_photos"].length === array.length){
+        console.log(resp.data);
+        props.addPostContent(resp.data);
+        setLoader(false);
+        setSuccess(true);
+        props.openSuccess();
+        hideModal()
+      }
+    }).catch(error=> console.log(error));
+  }
+
 
   const compressImage = (file, index, array, post, mypost_with_images) => {
     new Compressor(file, {
@@ -88,22 +108,7 @@ const PostPopup = props => {
         content.append("file", result, result.name)
 
         // upload the images
-        await axios.post(process.env.REACT_APP_API_URL + "/feeds/api/v1/post/media/", content, {
-          headers : {
-            "Content-Type": "multipart/form-data",
-            "authorization": `Token ${store.getState().userReducer.token}`
-          }
-        }).then(resp=>{
-
-          if(resp.data["posted_photos"].length === array.length){
-            console.log(resp.data);
-            props.addPostContent(resp.data);
-            setLoader(false);
-            props.openSuccess();
-            hideModal()
-
-          }
-        }).catch(error=> console.log(error));
+        uploadMedia(content, array);
       },
       error(err){
 
@@ -119,6 +124,7 @@ const PostPopup = props => {
 
 
   const submitPost = async () => {
+
     setLoader(true)
     let content = {
       post: postContent.post,
@@ -130,9 +136,18 @@ const PostPopup = props => {
       if(resp.message){
         throw resp.message;
       }
-      if(file) {
+
+      if(file ) {
         Object.values(file).forEach(async (item, index, array)=>{
-          compressImage(item, index, array, resp, mypost_with_images); // compress images before upload
+          let media_type = item.type.split("/")[0]
+          if(media_type == "image"){
+            compressImage(item, index, array, resp, mypost_with_images); // compress images before upload
+          } else if(media_type === "video"){
+            let content = new FormData();
+            content.append("post", resp.id)
+            content.append("file", item, item.name)
+            uploadMedia(content, array)
+          }
         })
       } else {
         console.log(resp)
@@ -373,6 +388,8 @@ const PostPopup = props => {
   }
 
 
+
+
   const removeTag = item => {
     let ind = tagged.findIndex(tag=> tag === item)
     let new_tag = tagged;
@@ -380,15 +397,27 @@ const PostPopup = props => {
     setTagged(new_tag);
   }
 
+  const closeSuccess = () => {
+    setSuccess(false)
+  }
+
 
   return (
+    <React.Fragment>
+      <Snackbar open={success} autoHideDuration={6000} onClose={closeSuccess}>
+          <Alert onClose={closeSuccess} severity="success" sx={{ width: '100%' }}>
+            Your post has been created successfully!
+          </Alert>
+      </Snackbar>
     <div className="popupDisplayer">
       <div id="dialog" ref={popupRef}>
       <div ref={defaultRef} id="postWrite" style={{ width:"100%" }}>
               <div>{renderHeader()}</div>
               <div className="postBanner">
                 <img src={props.user.avatar} width={35} height={35} style={{ borderRadius:"50%", objectFit:"cover" }} alt="profile" />
-                <h5>{props.user.first_name} {props.user.last_name}</h5>
+                <h5>{props.user.first_name} {props.user.last_name}
+                  {tagged.length ? <span> is with {tagged.map(item=> <b>{item.first_name} {item.last_name}</b>)}</span> : null}
+                </h5>
               </div>
               <div className="mediaActions">
                   <div className="postWrapper">
@@ -479,7 +508,7 @@ const PostPopup = props => {
       </Snackbar>
     </div>
   </div>
-
+    </React.Fragment>
   )
 }
 

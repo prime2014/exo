@@ -53,7 +53,7 @@ class User(AbstractBaseUser):
         null=False
     )
     avatar = models.CharField(
-        max_length=225,
+        max_length=200,
         null=True,
         blank=True
     )

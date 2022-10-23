@@ -13,6 +13,8 @@ import {
 } from "react-contexify";
 import { Link } from "react-router-dom";
 import "react-contexify/dist/ReactContexify.css";
+import { Navigate } from "react-router-dom";
+import { connect } from "react-redux";
 
 
 const MENU_ID = "menu-id";
@@ -46,22 +48,16 @@ const Navbar = props => {
 
       <ul className="companyInfo">
         <li><BsTelephoneFill className="infoIcons" style={{ margin:0, padding:0, verticalAlign:"middle" }} /> (+1) 234 5678 9101</li>
-        <li><FaEnvelope className="infoIcons"  style={{ margin:0, padding:0, verticalAlign:"middle" }} /> exo@info.com</li>
+        <li><FaEnvelope className="infoIcons"  style={{ margin:0, padding:0, verticalAlign:"middle" }} /> laytext@info.com</li>
       </ul>
     </div>
 
     <nav onScroll={handleStickyNavbar} className="navBar p-scrolltop-sticky">
-      <h1 className="bannerTitle">Exo</h1>
+      <h1 className="bannerTitle">Laytext</h1>
 
       <ul>
-        <li>Home</li>
-        <li>About Us</li>
-        <li>Special</li>
-        <li>
-          Testimonials
-        </li>
-        <li>Contact</li>
-        <li>Marketing</li>
+      <li><Link style={{ color:"#1A1A1D" }} to="/">Home</Link></li>
+        {props.user ?<li><Link style={{ color:"#1A1A1D" }} to="/feed">Feed</Link></li> : null}
         <li>
           <Button onClick={show} icon="pi pi-user" className="p-button-rounded" />
         </li>
@@ -88,4 +84,10 @@ const Navbar = props => {
 }
 
 
-export default Navbar;
+const mapStateToProps = state => {
+  return {
+    user: state.userReducer.user
+  }
+}
+
+export default connect(mapStateToProps, null)(Navbar);

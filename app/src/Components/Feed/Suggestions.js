@@ -1,27 +1,51 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { Layout } from "antd"
 import Tom from "../../Images/tom.jpg";
 import { Button } from "primereact/button";
 import { accountsApi } from "../../services/accounts/accounts.service";
+import toast from "react-hot-toast";
+import ReactDOM from "react-dom";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from 'primereact/skeleton';
+import Box from '@mui/material/Box';
 
 
 const Suggestions = props => {
   const [users, setUsers] = useState([])
   const { Content } = Layout;
+  const [loader, setLoader] = useState(false)
   const [start, setStart] = useState(0);
   const [prev, setPrev] = useState(false);
   const [next, setNext] = useState(true);
   const carouselRef = useRef()
+  const navigate = useNavigate()
   const step = 395;
 
+
+
   useEffect(()=>{
+    setLoader(true)
     accountsApi.getUsers().then(resp=> {
+      setLoader(false)
       setUsers(resp);
     })
   },[])
 
+
+  useLayoutEffect(()=>{
+  },[])
+
   const requestFriend = (pk) => {
-    accountsApi.friendRequest(pk).then(resp=> {
+    toast.promise(accountsApi.friendRequest(pk), {
+      loading: "Sending your friend request. Please wait...",
+      success: (data)=> {
+        console.log(data);
+      },
+      error:(err)=>{
+        console.log(err)
+      }
+    })
+    .then(resp=> {
       console.log(resp);
     })
   }
@@ -32,7 +56,7 @@ const Suggestions = props => {
       setStart(start + 145);
       carouselRef.current.style.transform = `translateX(-${145}px)`;
       carouselRef.current.style.transition = "all 0.5s ease-in-out";
-    } else if(start === 1330){
+    } else if(start >= (ReactDOM.findDOMNode(carouselRef.current).scrollWidth - step)){
       setStart(start + 145);
       carouselRef.current.style.transform = `translateX(-${start + 145}px)`;
       carouselRef.current.style.transition = "all 0.5s ease-in-out";
@@ -45,7 +69,7 @@ const Suggestions = props => {
 
   const prevSlide = () => {
     setNext(true)
-    if(start === 1475 || start === 145){
+    if(start >= ReactDOM.findDOMNode(carouselRef.current).scrollWidth || start <= 145){
       setStart(start - 145)
       carouselRef.current.style.transform = `translateX(${-start + 145}px)`;
       carouselRef.current.style.transition = "all 0.5s ease-in-out";
@@ -68,11 +92,17 @@ const Suggestions = props => {
     event.currentTarget.style.transition = "scale 0.7s ease-in-out linear";
   }
 
+  const goToProfile = (profile)=>{
+    navigate(`/${profile.username}-${profile.pk}`)
+  }
+
 
 
   useEffect(()=>{
-    if(start === 1475) setNext(false);
-    if(start === 0) setPrev(false);
+    let width = ReactDOM.findDOMNode(carouselRef.current).scrollWidth;
+    console.log(width)
+    if(start >= (width - step)) setNext(false);
+    if(start <= 0) setPrev(false);
   },[start])
 
   return (
@@ -83,20 +113,31 @@ const Suggestions = props => {
            <span className="pi pi-ellipsis-h" style={{ display:"inline-block", margin:"0 10px", paddingRight:"10px" }}></span>
         </div>
         <div ref={carouselRef} className="carousel-container">
-          {users.map(item=>{
+          {!loader ? users.map(item=>{
             return (
               <div key={item.pk} className="contentDiv">
                 <div style={{ height:"70%", borderRadius:"10px 10px 0 0", width:"100%", backgroundImage:`url(${item.avatar})`, backgroundSize:"cover", backgroundRepeat:"none", objectFit:"cover" }}></div>
                 <div className="relateContent">
                  <p>{item.first_name} {item.last_name}</p>
-                 <Button onClick={()=>requestFriend(item.pk)} iconPos="left" icon="pi pi-user-plus" className="add friend" label="Add Friend" />
+                 <Button onClick={()=>goToProfile(item)} iconPos="left" icon="pi pi-user-plus" className="add friend" label="View Profile" />
                 </div>
               </div>
             )
-          })}
+          }) : (
+            Array.from(new Array(3)).map(item=>{
+              return (
+                <div key={item} className="contentDiv flex mb-3">
+                  <Skeleton width="100%" height="70%" className="mb-2"></Skeleton>
+                  <Skeleton shape="rectangle" width="70%" height="15px" className="skele-text" ></Skeleton>
+                  <Skeleton shape="rectangle" width="50%" height="30px" className="skele-text" ></Skeleton>
+                </div>
+              )
+            })
+
+          )}
         </div>
         <span onMouseDown={handlePress} onMouseUp={handleRelease} onClick={prevSlide} className={prev ? "previous" : "hideControls"}>&#10094;</span>
-        <span onMouseDown={handlePress} onMouseUp={handleRelease} onClick={nextSlide} className={next ? "next" : "hideControls"}>&#10095;</span>
+        {users.length <= 3 ? null : <span onMouseDown={handlePress} onMouseUp={handleRelease} onClick={nextSlide} className={next ? "next" : "hideControls"}>&#10095;</span>}
       </div>
     </Content>
   );

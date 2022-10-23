@@ -8,13 +8,16 @@ from versatileimagefield.image_warmer import VersatileImageFieldWarmer
 from django.dispatch import receiver
 
 
+def jsondefault():
+    return {"bio": "", "requests": [], "city": "", "country": ""}
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, is_active=False, **extra_kwargs):
         user = self.model(
             email=email,
             username=extra_kwargs.get("username", None),
             is_active=is_active,
-            avatar=extra_kwargs.get("avatar", None),
             first_name=extra_kwargs.get("first_name", None),
             last_name=extra_kwargs.get("last_name", None),
             is_staff=extra_kwargs.get("is_staff", False),
@@ -55,7 +58,8 @@ class User(AbstractBaseUser):
     avatar = models.CharField(
         max_length=200,
         null=True,
-        blank=True
+        blank=True,
+        default="http://127.0.0.1:8000/media/profile/default_profile.jpg"
     )
     first_name = models.CharField(
         max_length=30,
@@ -88,7 +92,7 @@ class User(AbstractBaseUser):
         auto_now=True,
         editable=False
     )
-    meta = models.JSONField(null=True)
+    meta = models.JSONField(null=True, default=jsondefault)
 
     USERNAME_FIELD = "email"
     objects = UserManager()
@@ -162,6 +166,21 @@ class RelationshipManager(models.Manager):
         ])
 
         return friends[1]
+
+    def delete_friends(self, from_person, to_person, status="Friends"):
+        relation_one = self.model(
+            from_person=to_person,
+            to_person=from_person,
+            status=status
+        )
+        relation_two = self.model(
+            from_person=from_person,
+            to_person=to_person,
+            status=status
+        )
+        relation_one.delete()
+        relation_two.delete()
+        return "deleted"
 
 
 class Relationship(models.Model):

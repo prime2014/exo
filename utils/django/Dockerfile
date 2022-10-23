@@ -16,11 +16,11 @@ RUN apt-get update \
   && apt-get install -y libmagic-dev \
   # postgres client install
   && apt-get install -f -y postgresql-client \
+  # install sudo
+  && apt-get install -y sudo \
   # install a pushpin server
   && apt-get install -y pushpin \
-  # install opencv utilites
-  && apt-get install -y ffmpeg libsm6 libxext6 \
-  # cleaning up unused files
+  # remove unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
@@ -28,8 +28,8 @@ COPY requirements.txt /exo/
 
 RUN python -m pip install --upgrade pip  \
     && pip install -r requirements.txt \
-    && useradd -ms /bin/bash 1000
-
+    && useradd -ms /bin/bash 1000 \
+    && echo "1000:1000" | chpasswd && adduser 1000 sudo
 
 COPY --chown=1000:1000 . /exo/
 

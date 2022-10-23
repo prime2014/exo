@@ -1,9 +1,9 @@
 {
-  "short_name": "Exo",
+  "short_name": "Laytext",
   "name": "Create React App Sample",
   "icons": [
     {
-      "src": "exo.png",
+      "src": "laytext.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },

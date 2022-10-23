@@ -74,9 +74,11 @@ class UserCrudOperations(RedisConnectionAbstract):
         '''functionality to update an existing user in the database'''
         pass
 
-    def delete_user(self, user: dict) -> dict:
-        '''functionality to delete a user from the database'''
-        pass
+    def delete_user(self, pk) -> dict:
+        template = Template("MATCH (p1: Person {pgpk: $pk}) DELETE p1")
+        query = template.substitute(pk=pk)
+        self.social_graph.query(query)
+        return "successfully deleted"
 
     def get_followers(self, pk: int) -> list:
         '''gets a list of users who are following the requesting user'''

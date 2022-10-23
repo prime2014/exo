@@ -14,6 +14,8 @@ const Signup = props => {
     password:"",
     username:""
   })
+  const [loader, setLoader] = useState(false)
+  const [baseForm] = useState(credentials)
 
   const changeUsername = event => setCredentials({ ...credentials, username: event.target.value });
   const changeFirstname = event => setCredentials({ ...credentials, first_name: event.target.value });
@@ -25,12 +27,16 @@ const Signup = props => {
 
   const handleSubmitCredentials = event => {
     event.preventDefault();
+    setLoader(true)
     toast.promise(props.registerUser(credentials), {
       loading: "Signing you up...",
       success: (data)=> {
+        setLoader(false)
+        setCredentials(baseForm)
         return "Sign up was successful.Check your email for an activation link"
       },
       error: (error)=> {
+        setLoader(false)
         return "Error! There was an error, please try again!"
       }
     })
@@ -49,17 +55,17 @@ const Signup = props => {
                     <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
                       <div className="inputDiv">
                         <label htmlFor="email">Email:</label>
-                        <input onChange={changeEmail} className="signupInput" type={"email"} name="email" placeholder="Enter your email" value={credentials.email} />
+                        <input onChange={changeEmail} className="signupInput" required type={"email"} name="email" placeholder="Enter your email" value={credentials.email} />
                       </div>
                       <div className="inputDiv">
                         <label htmlFor="firstname">Firstname:</label>
-                        <input onChange={changeFirstname} className="signupInput" type={"text"} name="firstname" placeholder="Enter your firstname" value={credentials.first_name}/>
+                        <input required onChange={changeFirstname} className="signupInput" type={"text"} name="firstname" placeholder="Enter your firstname" value={credentials.first_name}/>
                       </div>
                     </Col>
                     <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12}>
                       <div className="inputDiv">
                         <label htmlFor="password">Password:</label>
-                        <input onChange={changePassword} className="signupInput" type={"password"} name="password" placeholder="Enter your password" value={credentials.password}/>
+                        <input minLength={8} onChange={changePassword} className="signupInput" required type={"password"} name="password" placeholder="Enter your password" value={credentials.password}/>
                       </div>
                       <div className="inputDiv">
                         <label htmlFor="lastname">Lastname:</label>
@@ -69,11 +75,11 @@ const Signup = props => {
                   </Row>
                   <div className="inputDiv">
                       <label htmlFor="username">Username:</label>
-                      <input onChange={changeUsername} className="signupInput" type="text" name="username" placeholder="Enter your username" value={credentials.username}/>
+                      <input onChange={changeUsername} required className="signupInput" type="text" name="username" placeholder="Enter your username" value={credentials.username}/>
                   </div>
                 </Col>
              </Row>
-             <Button className="signupBtn" label="Sign up" role={"submit"} />
+             <Button icon="pi pi-sign-out" iconPos="left" loading={loader} loadingIcon="pi pi-sun" className="signupBtn" label="Sign up" role={"submit"} />
              </form>
           </section>
         </Content>

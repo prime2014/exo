@@ -35,6 +35,40 @@ const fetchFeed = async () => {
   }
 }
 
+
+const likePost = async post => {
+  try {
+    let like = null;
+    let response = await axios.post(baseURL + `/feeds/api/v1/post/likes/`, { post }, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if (response) like = response.data;
+    return like;
+  } catch(error) {
+    return error;
+  }
+}
+
+const deletePostLike = async post_id => {
+
+  try {
+    let result = null;
+    let response = await axios.post(baseURL + `/feeds/api/v1/post/likes/delete_like/`, { post_id }, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if(response.status === 204) result = response.status;
+    return result;
+  } catch(error){
+    return error;
+  }
+}
+
 const postFeed = async post => {
   try {
     let news = null;
@@ -151,6 +185,42 @@ const deletePost = async id => {
   }
 }
 
+
+const editComment = async comment => {
+  try {
+    let c = null;
+    let response = await axios.put(baseURL + `/feeds/api/v1/post/comments/${comment.id}/`, comment, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if(response) c = response.data;
+    return c;
+  } catch(error){
+    return error;
+  }
+}
+
+const deleteComment = async id => {
+  try {
+    let c = null;
+    let response = await axios.delete(baseURL + `/feeds/api/v1/post/comments/${id}/`, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if(response) c = response.status;
+    return c;
+  } catch(error){
+    return error;
+  }
+}
+
+
+
+
 export const feedAPI = {
   updatePostStatus,
   deletePost,
@@ -160,5 +230,9 @@ export const feedAPI = {
   fetchNextFeed,
   getProfilePosts,
   postComments,
-  fetchComments
+  fetchComments,
+  likePost,
+  deletePostLike,
+  editComment,
+  deleteComment
 }

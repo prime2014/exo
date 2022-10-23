@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from djapps.feeds.models import Feed, Media, Tags, Comments
+from djapps.feeds.models import Feed, Media, Tags, Comments, LikeCount
 from djapps.accounts.serializers import FeedAuthor
 import logging
 from django.contrib.auth import get_user_model
@@ -86,15 +86,18 @@ class FeedSerializer(DynamicModelSerializer):
     )
     tag = TagsSerializer(instance=Tags.objects.all(), many=True)
     posted_photos = FeedForMedia(read_only=True, many=True)
-    comment_count = serializers.SerializerMethodField(method_name="comment_count_number")
+    comments = serializers.SerializerMethodField(method_name="comment_count_number")
+    likes = serializers.SerializerMethodField(method_name="like_count_number")
+    i_liked = serializers.SerializerMethodField(method_name="find_my_like")
 
     class Meta:
         model = Feed
         fields = "__all__"
-        read_only_fields = [
-            "likes",
-            "share"
-        ]
+        extra_kwargs = {
+            "comments": {"required": False},
+            "likes": {"required": False},
+            "i_liked": {"required": False},
+        }
 
     def to_representation(self, instance):
         result = super().to_representation(instance)
@@ -113,7 +116,63 @@ class FeedSerializer(DynamicModelSerializer):
         return self.Meta.model.objects.create(**validated_data)
 
     def comment_count_number(self, obj):
-        return obj.post_comments.count()
+        return obj.comments
+
+    def like_count_number(self, obj):
+        logger.info("MY OBJECT: %s" % obj)
+        return obj.likes
+
+    def find_my_like(self, obj):
+        request = self.context.get("request")
+        count = LikeCount.objects.filter(user=request.user, post=obj).count()
+        return True if count >= 1 else False
+
+
+class FeedCreateSerializer(DynamicModelSerializer):
+    author = serializers.ReadOnlyField(
+        source="author.pk"
+    )
+    tag = TagsSerializer(instance=Tags.objects.all(), many=True)
+    posted_photos = FeedForMedia(read_only=True, many=True)
+    # comments = serializers.SerializerMethodField(method_name="comment_count_number")
+    # likes = serializers.SerializerMethodField(method_name="like_count")
+    i_liked = serializers.SerializerMethodField(method_name="find_my_like")
+
+    class Meta:
+        model = Feed
+        fields = "__all__"
+        extra_kwargs = {
+            "comments": {"required": False},
+            "likes": {"required": False},
+            "i_liked": {"required": False},
+        }
+
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        request = self.context.get("request")
+        result['author'] = FeedAuthor(instance=instance.author, context={"request": request}).data
+        # result["author"] = dict(instance.values("pk", "first_name", "last_name", "username", "avatar"))
+        return result
+
+    def create(self, validated_data):
+        if "tag" in validated_data.keys():
+            tag = validated_data.pop("tag")
+            feed = self.Meta.model.objects.create(**validated_data)
+            if len(tag):
+                Tags.objects.bulk_create(list(Tags(content_object=feed, user=t.get("user")) for t in tag))
+            return feed
+        return self.Meta.model.objects.create(**validated_data)
+
+    def comment_count_number(self, obj):
+        return obj.comments
+
+    def like_count(self, obj):
+        return obj.likes
+
+    def find_my_like(self, obj):
+        request = self.context.get("request")
+        count = LikeCount.objects.filter(user=request.user, post=obj).count()
+        return True if count >= 1 else False
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -137,3 +196,20 @@ class CommentSerializer(serializers.ModelSerializer):
         comment = self.Meta.model(**validated_data)
         comment.save()
         return comment
+
+
+class LikeCountSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source="user.pk")
+
+    class Meta:
+        model = LikeCount
+        fields = (
+            "pk",
+            "user",
+            "post",
+        )
+
+    def create(self, validated_data):
+        like = self.Meta.model(**validated_data)
+        like.save()
+        return like

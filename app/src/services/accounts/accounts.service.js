@@ -3,13 +3,10 @@ import { store } from "../../redux/store";
 
 
 
-let baseURL = null;
 
-if (process.env.NODE_ENV === "development") {
-  baseURL = process.env.REACT_APP_API_URL;
-} else if(process.env.NODE_ENV === "production"){
-  baseURL = process.env.REACT_APP_PRODUCTION_API_URL;
-}
+let baseURL = process.env.REACT_APP_API_URL;
+
+
 
 const client = axios.create({
   baseURL,
@@ -37,7 +34,7 @@ const login = async credentials => {
 const registerAccount = async credentials => {
   try {
       let user = null;
-      let response = await client.post('/accounts/api/v1/users/', { ...credentials });
+      let response = await client.post('/accounts/api/v1/auth/', { ...credentials });
       if (response) user = response.data;
       console.log(user);
       return user;
@@ -67,7 +64,7 @@ const searchUsers = async username => {
 const fetchAuthUser = async id => {
   try {
     let user = null;
-    let response = await client.get(`/accounts/api/v1/users/${id}/`);
+    let response = await client.get(`/accounts/api/v1/auth/${id}/`);
     if (response) user = response.data;
     console.log(user);
     return user;
@@ -80,7 +77,7 @@ const fetchAuthUser = async id => {
 const activateAccount = async (id, token) => {
   try {
     let user = null;
-    let response = await client.patch(`/accounts/api/v1/users/${id}/activate_account/`, { token });
+    let response = await client.patch(`/accounts/api/v1/auth/${id}/activate_account/`, { token });
     if (response) user = response.data;
     console.log(user);
     return user
@@ -91,19 +88,20 @@ const activateAccount = async (id, token) => {
 
 
 const getUserProfile = async id => {
-  try {
-    let user = null;
+   try {
+    let profile = null;
     let response = await axios.get(`/accounts/api/v1/users/${id}/`, {
       headers: {
         'Content-Type': 'application/json',
         'authorization': `Token ${store.getState().userReducer.token}`
       }
-    });
-    if (response) user = response.data;
-    return user;
-  } catch(error){
-    return error;
-  }
+    })
+    if (response) profile = response.data;
+    console.log(profile)
+    return profile;
+   } catch (error){
+      return error;
+   }
 }
 
 
@@ -126,7 +124,7 @@ const searchFriends = async (first_name, user_id) => {
 const getUsers = async () => {
   try {
     let users = null;
-    let response = await axios.get("/accounts/api/v1/users/", {
+    let response = await axios.get(`/accounts/api/v1/suggestions/${store.getState().userReducer.user.pk}/suggestions/`, {
       headers: {
         'Content-Type': "application/json",
         "authorization": `Token ${store.getState().userReducer.token}`
@@ -140,11 +138,10 @@ const getUsers = async () => {
 }
 
 
-const friendRequest = async (pk) => {
+const friendRequest = async (profile) => {
   try {
-    let user = store.getState().userReducer.user;
     let req = null;
-    let response = await axios.post(`/accounts/api/v1/users/${user.pk}/request_friend/`, { pk }, {
+    let response = await axios.put(`/accounts/api/v1/users/${profile.id}/request_friend/`, profile, {
       headers: {
         'Content-Type': "application/json",
         "authorization": `Token ${store.getState().userReducer.token}`
@@ -153,6 +150,116 @@ const friendRequest = async (pk) => {
     if (response) req = response.data;
     return req;
   } catch (error) {
+    return error;
+  }
+}
+
+
+const cancelFriendRequest = async (profile) => {
+  try {
+    let req = null;
+    let response = await axios.patch(`/accounts/api/v1/users/${profile.id}/request_friend/`, profile, {
+      headers: {
+        'Content-Type': "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if (response) req = response.data;
+    return req;
+  } catch (error) {
+    return error;
+  }
+}
+
+const logoutUserSession = async () => {
+  try {
+     let res = null;
+     let response = await axios.get(`/accounts/auth/logout/`, {
+      headers: {
+        'Content-Type': "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+     });
+     if (response) res = response.data;
+     return res;
+  } catch(error){
+    return error;
+  }
+}
+
+const addFriend = async(friend_pk)=> {
+  try {
+     let result = null;
+     let response = await client.post('/accounts/api/v1/relationship/', {
+       from_person: parseInt(store.getState().userReducer.user.pk),
+       to_person: friend_pk
+     }, {
+      headers: {
+        'Content-Type': "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+     });
+     if(response) result = response.data;
+     console.log(result);
+     return result;
+  } catch(error){
+    return error;
+  }
+}
+
+
+const unfriendUser = async to_person => {
+  let from_person = store.getState().userReducer.user.pk
+  let data = {
+    from_person,
+    to_person
+  }
+  try {
+    let status = null;
+    let response = await axios.put(`/accounts/api/v1/users/${from_person}/unfriend/`, data, {
+      headers: {
+        'Content-Type': "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if(response) status = response.data;
+    return status;
+  } catch(error){
+    return error;
+  }
+}
+
+
+const updateProfile = async (credentials, pk) => {
+  try {
+    let user = null;
+    let response = await axios.put(`/accounts/api/v1/users/${pk}/`, { ...credentials }, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if (response) user = response.data;
+    console.log(user);
+    return user;
+  } catch(error) {
+    return error;
+  }
+}
+
+const deleteAccount = async (pk) => {
+  try {
+    let status = null;
+    let response = await axios.delete(`/accounts/api/v1/users/${pk}/`, {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Token ${store.getState().userReducer.token}`
+      }
+    });
+    if (response) status = response.status;
+    console.log(status);
+    return status;
+  } catch(error){
     return error;
   }
 }
@@ -166,5 +273,11 @@ export const accountsApi = {
   getUserProfile,
   searchFriends,
   getUsers,
-  friendRequest
+  friendRequest,
+  logoutUserSession,
+  addFriend,
+  updateProfile,
+  cancelFriendRequest,
+  unfriendUser,
+  deleteAccount
 }

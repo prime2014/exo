@@ -4,10 +4,52 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { MdOutlineHelp } from "react-icons/md";
 import { GiExitDoor } from "react-icons/gi";
 import { BsFillMoonFill } from "react-icons/bs";
+import toast from "react-hot-toast";
+import { accountsApi } from "../services/accounts/accounts.service";
+import { useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import { logoutUser } from "../redux/actions";
+
 
 const DropdownMenu = props => {
+
+  const navigate = useNavigate()
+
+  const logoutUser = event => {
+    event.stopPropagation()
+    toast.promise(accountsApi.logoutUserSession(), {
+      loading: "Logging you out in a moment...",
+      success: (data)=> {
+        let { success } = data;
+        if (success) {
+          localStorage.clear()
+          props.logoutUser();
+          navigate("/")
+          return "Logout was successful"
+        } else {
+          throw "There was a problem with the operation!"
+        }
+      },
+      error: (err)=>{
+        return err;
+      }
+    },{
+      style: {
+        borderRadius: "10px",
+        color:"#fff",
+        background:"#3bd4d4"
+      }
+  })
+  }
+
+  const goToSettings = (event) => {
+    event.stopPropagation()
+    navigate(`/${props.user.pk}/settings`);
+  }
+
+
   return (
-    <section className="dropdown">
+    <section onClick={event=> event.stopPropagation()} className="dropdown">
       <div>
         <ul className="contextDrop">
           <li>
@@ -29,19 +71,12 @@ const DropdownMenu = props => {
             </div>
           </li>
           <li className="bottomDrop">
-            <div>
+            <div onClick={goToSettings}>
               <span className="iconLL"><IoSettingsSharp /></span>
               <span style={{ padding:"0 5px" }}>Settings &amp; Privacy</span>
             </div>
-            <div>
-              <span className="iconLL"><MdOutlineHelp /></span>
-              <span style={{ padding:"0 5px" }}>Help &amp; Support</span>
-            </div>
-            <div>
-              <span className="iconLL"><BsFillMoonFill /></span>
-              <span style={{ padding:"0 5px" }}>Display &amp; accessibility</span>
-            </div>
-            <div>
+
+            <div onClick={logoutUser}>
               <span className="iconLL"><GiExitDoor /></span>
               <span style={{ padding:"0 5px" }}>Log Out</span>
             </div>
@@ -52,4 +87,14 @@ const DropdownMenu = props => {
   )
 }
 
-export default DropdownMenu;
+const mapStateToProps = state => {
+  return {
+    user: state.userReducer.user
+  }
+}
+
+const mapDispatchToProps  = {
+  logoutUser
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DropdownMenu);

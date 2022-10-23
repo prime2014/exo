@@ -4,17 +4,6 @@ volumes:
   local_db: {}
 
 services:
-  webserver:
-    image: nginx:latest
-    container_name: exo_local_nginx_webserver
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./server:/usr/share/nginx/html
-    networks:
-      - exo-net
-
   postgres:
     restart: on-failure
     image: postgres:12
@@ -30,7 +19,7 @@ services:
     restart: on-failure
     build:
       context: .
-      dockerfile: ./utils/django/Dockerfile
+      dockerfile: ./utils/django/Dockerfile.prod
     image: exo_django_image
     container_name: exo_local_django
     volumes:
@@ -45,40 +34,6 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
-    networks:
-      - exo-net
-
-  react:
-    restart: on-failure
-    stdin_open: true
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    build:
-      context: .
-      dockerfile: ./utils/react/Dockerfile
-    image: local_exo_react
-    container_name: exo_local_react
-    volumes:
-      - ./app/:/app
-      - /app/node_modules
-    env_file:
-      - ./.env
-    ports:
-      - "3000:3000"
-    command: >
-      sh -c "npm start"
-    depends_on:
-      - django
-    networks:
-      - exo-net
-
-  redisinsight:
-    image: redislabs/redisinsight:latest
-    container_name: exo_local_redisinsight
-    ports:
-      - '8001:8001'
-    volumes:
-      - ./insights:/db
     networks:
       - exo-net
 
@@ -102,7 +57,7 @@ services:
         --loadmodule /usr/lib/redis/modules/rejson.so
         --loadmodule /usr/lib/redis/modules/redisbloom.so
         --loadmodule /usr/lib/redis/modules/redisgears.so Plugin /var/opt/redislabs/modules/rg/plugin/gears_python.so
-        --save 60 1
+        --save 10800 1
     deploy:
       replicas: 1
       restart_policy:
@@ -122,16 +77,6 @@ services:
     depends_on:
       - postgres
       - redisModules
-    networks:
-      - exo-net
-
-  mailhog:
-    image: mailhog/mailhog
-    container_name: exo_local_mailhog
-    ports:
-      - "1025:1025"  # SMTP Server
-      - "8025:8025"  # Browsable view of mailhog UI
-    restart: unless-stopped
     networks:
       - exo-net
 

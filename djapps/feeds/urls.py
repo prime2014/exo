@@ -7,18 +7,20 @@ from djapps.feeds.api import (
     MediaViewset,
     TagsViewset,
     CommentViewset,
-    PostMedia
+    PostMedia,
+    LikeCountViewset
 )
 
 
 router = DefaultRouter()
 router.register("tags", viewset=TagsViewset, basename="tags")
 router.register("media", viewset=MediaViewset, basename="media")
+router.register("comments", viewset=CommentViewset, basename="comments")
+router.register("likes", viewset=LikeCountViewset, basename="likes")
 
 
 urlpatterns = [
     path("api/v1/post/", include(router.urls)),
-    path("api/v1/post/comments/", CommentViewset.as_view()),
     # path("api/media/<int:pk>/", MediaView.as_view()),
     path("api/v1/feeds/", FeedGenericAPIView.as_view()),
     path("api/v1/feeds/write/", FeedAPIViewWrite.as_view()),

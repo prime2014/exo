@@ -4,7 +4,7 @@ import {
   applyMiddleware
 } from "redux";
 import storage from "redux-persist/lib/storage";
-import { userReducer, feedReducer } from "./reducer/reducer";
+import { userReducer, feedReducer, notifications } from "./reducer/reducer";
 import thunk from "redux-thunk";
 import { persistReducer } from "redux-persist";
 
@@ -14,14 +14,16 @@ const persistConfig = {
   storage,
   whitelist: [
     "userReducer",
-    "feedReducer"
+    "feedReducer",
+    "notifications"
   ]
 }
 
 
 let rootReducer = combineReducers({
   userReducer,
-  feedReducer
+  feedReducer,
+  notifications
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

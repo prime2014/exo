@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, { useState, useRef, useEffect  } from "react";
 import { connect } from "react-redux";
-import LiveCropped from "../Images/liveCropped.jpg";
-import { Row, Col, Avatar, Input, Layout } from "antd";
+import { Input } from "antd";
 import { FcGallery } from "react-icons/fc";
 import { MdOutlineEmojiEmotions, MdSettingsInputAntenna } from "react-icons/md";
 import { Button } from "primereact/button";
@@ -24,6 +23,8 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from '@mui/material/Alert';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -54,6 +55,7 @@ const PostPopup = props => {
   const defaultRef = useRef();
   const tagRef = useRef();
   const popupRef = useRef();
+  const searchRef = useRef(null);
 
   const showIcon = event => event.currentTarget.nextElementSibling.style.display = "inline-block";
   const hideTooltipIcon = event => event.currentTarget.nextElementSibling.style.display = "none";
@@ -65,7 +67,7 @@ const PostPopup = props => {
   useEffect(()=>{
     setFriends([]);
 
-  },[postContent, postSection, tagged.length])
+  },[postContent, postSection, tagged])
 
 
   const closeModal = () => {
@@ -363,6 +365,8 @@ const PostPopup = props => {
       let name = event.target.value;
       setLoadFriends(true);
       accountsApi.searchFriends(name, props.user.pk).then(resp=>{
+        let pks = tagged.map(item=> item.pk)
+        // let new_array = resp.filter(item=>  !pks.some(item.pk) )
         setFriends([ ...resp ])
         setLoadFriends(false)
       })
@@ -372,18 +376,19 @@ const PostPopup = props => {
   }
 
   const selectUserToTag = (ev, item) =>{
-    console.log("PRESENT:", tagged.includes(item))
-    if(!tagged.includes(item)){
+
+    let selected = tagged.some(tag => tag.pk === item.pk)
+    if(!selected){
       ev.currentTarget.classList.add("added");
       setTagged([ ...tagged, item ])
+      searchRef.current.value = "";
     } else {
       ev.currentTarget.classList.remove("added")
-      let index = tagged.findIndex(tag=> {
-        return tag === item;
-      })
+      let index = tagged.findIndex(tag=> tag.pk === item.pk)
       let ndarray = tagged;
-      ndarray.splice(index);
+      ndarray.splice(index, 1);
       setTagged(ndarray);
+      searchRef.current.value = "";
     }
   }
 
@@ -391,16 +396,38 @@ const PostPopup = props => {
 
 
   const removeTag = item => {
-    let ind = tagged.findIndex(tag=> tag === item)
+    console.log(item)
+    let ind = tagged.findIndex(tag=> tag.pk === item.pk)
+    console.log(ind)
     let new_tag = tagged;
     new_tag.splice(ind, 1)
     setTagged(new_tag);
+    setFriends([])
   }
 
   const closeSuccess = () => {
     setSuccess(false)
   }
 
+
+  const displayFriends = () => {
+    return friends.length ?
+      friends.map(item=> {
+      return(
+        <div onClick={(event)=>selectUserToTag(event, item)} className={tagged.includes(item) ? "hiddenTaggy" : "friendsTag"} key={item.pk}>
+          <div>
+            <img src={item.avatar} alt="profile" style={{ width:"35px", height:"35px", borderRadius:"50%", objectFit:"cover" }} />
+            <span> {item.first_name} {item.last_name}</span>
+          </div>
+          {/* <span className="pi pi-check-circle hiddenCheck"></span> */}
+        </div>
+      )
+    }) : (
+    <div style={{ width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", padding:"20px 0" }}>
+        <span style={{ fontSize:"22px", display:"block", margin:"0 auto" }} className="pi pi-user-plus"></span>
+        <p style={{ fontFamily:"Roboto", display:"block", margin:"0 auto" }}>No friends with these initials</p>
+    </div>)
+  }
 
   return (
     <React.Fragment>
@@ -416,7 +443,15 @@ const PostPopup = props => {
               <div className="postBanner">
                 <img src={props.user.avatar} width={35} height={35} style={{ borderRadius:"50%", objectFit:"cover" }} alt="profile" />
                 <h5>{props.user.first_name} {props.user.last_name}
-                  {tagged.length ? <span> is with {tagged.map(item=> <b>{item.first_name} {item.last_name}</b>)}</span> : null}
+                  {tagged.length ? <span> is with {tagged.map((item, index, array)=> {
+                    if(index < array.length -2){
+                      return <b>{item.first_name} {item.last_name}, </b>;
+                    } else if(index == array.length - 2){
+                      return <b>{item.first_name} {item.last_name} and </b>
+                    } else if(index == array.length - 1){
+                      return <b>{item.first_name} {item.last_name}</b>
+                    }
+                  })}</span> : null}
                 </h5>
               </div>
               <div className="mediaActions">
@@ -457,43 +492,36 @@ const PostPopup = props => {
       <div ref={tagRef} id="postTag" className="postModal">
               <div>{renderHeaderTag()}</div>
               <div className="postBanner">
-                <img src={props.user.avatar} width={35} height={35} style={{ borderRadius:"50%", objectFit:"cover" }} alt="profile" />
+                <img  src={props.user.avatar} width={35} height={35} style={{ borderRadius:"50%", objectFit:"cover" }} alt="profile" />
                 <h5>{props.user.first_name} {props.user.last_name}</h5>
               </div>
-
+              <div className="inputArr">
+                    {tagged.length ? <div ref={textRef} style={{ width:"100%" }} className={tagged.length ? "displayArea" : "hideArea"} cols={100} rows='2'>
+                      <Stack direction="row" spacing={1}>
+                        {tagged.map(item=>{
+                            return (
+                              <Chip
+                                key={item.pk}
+                                label={item.first_name}
+                                onDelete={()=>removeTag(item)}
+                              />
+                            )
+                        })}
+                      </Stack>
+                    </div> : null}
+                </div>
               <div className="searchInp">
                 <p style={{ padding:0, margin:0 }}>Select friend/friends</p>
-                <input autoComplete="off" onChange={searchFriends} style={{ lineHeight:"40px", width:"100%", borderRadius:"50px", outline:"none", border:"1px solid #ccc", backgroundColor:"#F0F2F5" }} type="search" name="friends" placeholder="search friends" />
+                <input ref={searchRef} autoComplete="off" onChange={searchFriends} style={{ lineHeight:"40px", width:"100%", borderRadius:"50px", outline:"none", border:"1px solid #ccc", backgroundColor:"#F0F2F5" }} type="search" name="friends" placeholder="search friends" />
                 <div style={{ display:"flex", flexWrap:"wrap", margin:"10px 0" }}>
                   {loadFriends === false ?
-                  friends.map(item=> {
-                    return(
-                      <div onClick={(event)=>selectUserToTag(event, item)} className={tagged.includes(item) ? "hiddenTaggy" : "friendsTag"} key={item.pk}>
-                        <div>
-                          <img src={item.avatar} alt="profile" style={{ width:"35px", height:"35px", borderRadius:"50%", objectFit:"cover" }} />
-                          <span> {item.first_name} {item.last_name}</span>
-                        </div>
-                        {/* <span className="pi pi-check-circle hiddenCheck"></span> */}
-                      </div>
-                    )
-                  }) :
+                  (searchRef.current !== null && searchRef.current.value && displayFriends()) :
                   <div style={{ display:"flex", justifyContent:"center", alignItems:"center", width:"100%" }}>
                     <MoonLoader size={60} color="lightblue"/>
                   </div>
                   }
                 </div>
-                <div className="inputArr">
-                    <div ref={textRef} style={{ width:"100%" }} className={tagged.length ? "displayArea" : "hideArea"} cols={100} rows='2'>
-                      {tagged.map(item=>{
-                          return (
-                            <div className="tagz" key={item.pk}>
-                              <span>{item.first_name}</span>
-                              <span onClick={()=>removeTag(item)} style={{ marginLeft:10, fontSize:"20px", cursor:"pointer" }}>&times;</span>
-                            </div>
-                          )
-                      })}
-                    </div>
-                </div>
+
               </div>
       </div>
 

@@ -59,7 +59,6 @@ services:
       sh -c "npm start"
     depends_on:
       - django
-    mem_limit: 2000m
     networks:
       - exo-net
 

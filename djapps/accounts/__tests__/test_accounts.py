@@ -21,7 +21,7 @@ credentials = {
 @pytest.mark.django_db(transaction=True)
 def test_signup():
     client = APIClient()
-    resp = client.post("/accounts/api/v1/users/", data=credentials, format="json")
+    resp = client.post("/accounts/api/v1/auth/", data=credentials, format="json")
     logger.info("CALL LOG: %s" % resp.get("data"))
     assert resp.status_code == 201
 

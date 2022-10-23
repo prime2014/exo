@@ -34,12 +34,6 @@ class Feed(models.Model):
         null=True,
         blank=True
     )
-    likes = models.PositiveIntegerField(
-        default=0
-    )
-    share = models.PositiveIntegerField(
-        default=0
-    )
     flagged = models.BooleanField(
         default=False,
         null=True
@@ -52,6 +46,11 @@ class Feed(models.Model):
         default=False,
         null=True
     )
+    modified_date = models.DateTimeField(
+        auto_now=True,
+        null=True,
+        editable=False
+    )
 
     class Meta:
         ordering = ("-pub_date", )
@@ -61,6 +60,22 @@ class Feed(models.Model):
 
     def __str__(self):
         return self.author.username + " POST"
+
+
+class LikeCount(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="liker"
+    )
+    post = models.ForeignKey(
+        Feed,
+        on_delete=models.CASCADE,
+        related_name="status_update"
+    )
+
+    def __str__(self):
+        return self.user.username
 
 
 class Media(models.Model):

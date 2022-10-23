@@ -10,7 +10,6 @@ import {
   BsFacebook,
   BsInstagram,
   BsLinkedin,
-  BsTelephoneFill,
   BsPieChartFill,
   BsClockFill,
   BsPatchCheck,
@@ -20,12 +19,24 @@ import {
 import { AiFillTwitterCircle } from "react-icons/ai";
 import { RiDeleteBack2Fill } from "react-icons/ri";
 import { Row, Col, Layout, Carousel, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import CountUp from "react-countup";
+import { Toaster } from "react-hot-toast";
+import { connect } from "react-redux";
+import Footer from "../../Common/Footer";
 
 
 
 class Home extends React.Component {
+
+
+    goToSignup = event => {
+      return <Navigate to={"/account/signup"} />;
+    }
+
+    goTologin = event => {
+      return <Navigate to={"/account/login"} />
+    }
 
 
     render(){
@@ -33,7 +44,9 @@ class Home extends React.Component {
       const { Content } = Layout;
         return(
             <div>
+
                 <Navbar>
+                  <Toaster />
                    <div className="bannerImg">
 
                      <TweenOne className="bannerTextContent"
@@ -43,8 +56,8 @@ class Home extends React.Component {
 
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam assumenda ea quo cupiditate facere deleniti fuga officia</p>
                        <div className="actionBtns">
-                         <button>SIGN UP</button>
-                         <button>LOGIN</button>
+                         <button onClick={this.goToSignup}>SIGN UP</button>
+                         <button onClick={this.goTologin}>LOGIN</button>
                        </div>
                        </TweenOne>
                    </div>
@@ -54,7 +67,7 @@ class Home extends React.Component {
                           <img src={AboutImg} alt="about-us" className="aboutUs" />
 
                           <div>
-                            <h4 className="companyTitle">Exo Company</h4>
+                            <h4 className="companyTitle">Laytext Company</h4>
 
                             <h2>About Us</h2>
                             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui fuga ipsa, repellat blanditiis nihil, consectetur.
@@ -244,7 +257,7 @@ class Home extends React.Component {
                         <h1>Get In Touch</h1>
                       </div>
 
-                      <Form className="contactForm">
+                      <form onSubmit={(event)=>event.stopPropagation()} className="contactForm">
                         <h1>Contact Form</h1>
 
                         <Row gutter={[16, 16]}>
@@ -277,12 +290,19 @@ class Home extends React.Component {
                         <div>
                           <button>SEND MESSAGE</button>
                         </div>
-                      </Form>
+                      </form>
                    </section>
                 </Navbar>
+                <Footer />
             </div>
         )
     }
 }
 
-export default Home;
+const mapStateToProps = state => {
+  return {
+    user: state.userReducer.user
+  }
+}
+
+export default connect(mapStateToProps, null)(Home);

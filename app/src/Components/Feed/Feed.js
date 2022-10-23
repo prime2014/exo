@@ -10,7 +10,6 @@ import { ScrollTop } from 'primereact/scrolltop';
 import axios from "axios";
 import { connect } from "react-redux";
 import { getFeed, fetchNextBatch } from "../../redux/actionDispatch";
-import { IoNewspaperOutline } from "react-icons/io5";
 // import "emoji-mart/css/emoji-mart.css";
 import { FcPicture, FcSms, FcNews, FcVideoCall } from "react-icons/fc";
 import debounce from "lodash.debounce";
@@ -30,6 +29,9 @@ import Friends from "./img/friends.png";
 import Videos from "./img/video3.png";
 import Favorites from "./img/favorites.png";
 import Pages from "./img/pages.png";
+import { likeSelectedPost } from "../../redux/actionDispatch";
+import { Toaster } from "react-hot-toast";
+import { Navigate } from "react-router-dom";
 
 
 
@@ -52,7 +54,9 @@ class Feed extends Component {
        status: null,
        success: false,
        error: false,
-       create_post: false
+       create_post: false,
+       loadLike: false,
+
      }
      this.imageRef = React.createRef();
      this.carouselRef = React.createRef();
@@ -61,8 +65,9 @@ class Feed extends Component {
 
 
 
+
   componentDidMount(){
-    this.props.getFeed();
+
     if('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices){
       console.log("LET'S GET THIS PARTY STARTED");
     }
@@ -87,6 +92,7 @@ class Feed extends Component {
     }
 
   }
+
 
   showFullPost = event => {
     this.setState({ commentPopup: true });
@@ -346,6 +352,14 @@ class Feed extends Component {
 
 
 
+
+  // componentDidUpdate(prevProps, prevState){
+  //   if(this.props.feed !== this.state.myfeed){
+  //     this.props.getFeed();
+  //   }
+  // }
+
+
   render(){
     // console.log(this)
     window.onscroll = debounce(()=>{
@@ -359,10 +373,12 @@ class Feed extends Component {
 
     const { TextArea } = Input;
     const { Content } = Layout;
-    const { feed } = this.props;
+
 
     return(
       <section style={{ position:"relative" }}>
+          <Toaster />
+          {Object.keys(this.props.user).length ? null : <Navigate to="/" />}
           {this.state.create_post && <Postpopup openSuccess={this.openSuccessAlert} close={this.closePostModal} />}
           <Navbar>
               <Snackbar open={this.state.success} autoHideDuration={6000} onClose={this.closeAlert}>
@@ -373,7 +389,7 @@ class Feed extends Component {
 
               <div className="newsRow">
                 <Row gutter={[16, 16]}>
-                <Col xs={24} sm={24} md={7} lg={7} xl={7}>
+                <Col xs={0} sm={24} md={7} lg={7} xl={7} className="firstCol">
                     <div className="leftAside">
                     <div className="profileBio" style={{ background:`url(${Cover})`, backgroundSize:"cover", backgroundRepeat:"no-repeat" }}>
                       <Avatar style={{ border:"7px solid #fff", boxShadow:"2px 2px 5px #444", marginTop:"-15px", marginRight:"-5px", zIndex:99 }} src={this.props.user.avatar} alt="profile" size={80} />
@@ -428,18 +444,10 @@ class Feed extends Component {
                   </div>
 
                   <Content style={{ margin:"40px 0" }}>
-                    {feed.length ?
-                      <PostDisplay feed={feed}/>
-                      // <VirtualScroll rows={[...this.displayFeeds()]} rowHeight={250}/>
-                     : (
-                      <div className="noFeedText">
-                        <h3>No item on your feed. Create your first post</h3>
-                        <IoNewspaperOutline style={{ fontSize:"30px" }}/>
-                      </div>
-                     )}
+                      <PostDisplay />
                   </Content>
                 </Col>
-                <Col xs={24} sm={24} md={6} lg={6} xl={6}>
+                <Col xs={0} sm={24} md={6} lg={6} xl={6}>
                   <div className="suggestions">
                     <div>
                       <h4>Friend Suggestions</h4>
@@ -503,8 +511,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   getFeed,
   fetchNextBatch,
-  addPostContent
+  addPostContent,
+  likeSelectedPost
 }
+
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(Feed);

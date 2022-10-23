@@ -11,8 +11,12 @@ import {
   Submenu,
   useContextMenu
 } from "react-contexify";
-import { Link } from "react-router-dom";
+
 import "react-contexify/dist/ReactContexify.css";
+import { Toaster } from "react-hot-toast";
+import { Navigate, Link } from "react-router-dom";
+import { connect } from "react-redux";
+
 
 
 const MENU_ID = "menu-id";
@@ -36,6 +40,7 @@ const Navbar = props => {
 
   return (
     <React.Fragment>
+    <Toaster />
     <div className="topBar">
       <ul className="topIcons">
         <li><BsFacebook /></li>
@@ -44,24 +49,18 @@ const Navbar = props => {
         <li><BsLinkedin /></li>
       </ul>
 
-      <ul className="companyInfo">
-        <li><BsTelephoneFill className="infoIcons" style={{ margin:0, padding:0, verticalAlign:"middle" }} /> (+1) 234 5678 9101</li>
-        <li><FaEnvelope className="infoIcons"  style={{ margin:0, padding:0, verticalAlign:"middle" }} /> exo@info.com</li>
+      <ul style={{ display:"flex", flexWrap:"wrap" }} className="companyInfo">
+        <li style={{ fontSize: "1rem" }}><BsTelephoneFill className="infoIcons" style={{ margin:0, padding:0, verticalAlign:"middle" }} /> (+1) 234 5678 9101</li>
+        <li style={{ fontSize: "1rem"}}><FaEnvelope className="infoIcons"  style={{ margin:0, padding:0, verticalAlign:"middle" }} /> laytext@info.com</li>
       </ul>
     </div>
 
     <nav onScroll={handleStickyNavbar} className="navBar p-scrolltop-sticky">
-      <h1 className="bannerTitle">Exo</h1>
+      <h1 className="bannerTitle">Laytext</h1>
 
       <ul>
-        <li>Home</li>
-        <li>About Us</li>
-        <li>Special</li>
-        <li>
-          Testimonials
-        </li>
-        <li>Contact</li>
-        <li>Marketing</li>
+        <li><Link style={{ color:"#1A1A1D" }} to="/">Home</Link></li>
+        {props.user ? <li><Link style={{ color:"#1A1A1D" }} to="/feed">Feed</Link></li> : null}
         <li>
           <Button onClick={show} icon="pi pi-user" className="p-button-rounded" />
         </li>
@@ -88,5 +87,11 @@ const Navbar = props => {
   )
 }
 
+const mapStateToProps = state => {
+  return {
+    user: state.userReducer.user
+  }
+}
 
-export default Navbar;
+
+export default connect(mapStateToProps, null)(Navbar);

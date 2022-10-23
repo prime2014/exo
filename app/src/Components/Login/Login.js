@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import Google from "../../Images/google.svg";
 import Twitter from "../../Images/twitter.svg";
 import Facebook from "../../Images/facebook.svg";
-import { Captcha } from 'primereact/captcha';
 import cookie from "react-cookies";
 import { connect } from "react-redux";
 import { loginUser } from "../../redux/actionDispatch";
@@ -23,6 +22,7 @@ const Login = props => {
     email:"",
     password:""
   })
+  const [loader, setLoader] = useState(false)
 
   const { Content } = Layout;
 
@@ -36,9 +36,11 @@ const Login = props => {
 
   const handleLogin = (event) => {
     event.preventDefault();
+    setLoader(true)
     toast.promise(props.loginUser(credentials), {
       loading: "Logging you in...",
       success: (data)=>{
+        setLoader(false)
         if(data.token){
           const expires = new Date()
           expires.setDate(Date.now() + 1000 * 60 * 60 * 24 * 14)
@@ -49,7 +51,7 @@ const Login = props => {
         throw data;
       },
       error: (err)=>{
-
+        setLoader(false)
         return "Invalid user credentials!";
       }
     }, {
@@ -74,11 +76,11 @@ const Login = props => {
                     <form onSubmit={handleLogin}>
                       <div>
                         <label htmlFor="email">Email</label>
-                        <input onChange={handleEmail} id="email" type="email" name="email" value={credentials.email} />
+                        <input onChange={handleEmail} id="email" required type="email" name="email" value={credentials.email} />
                       </div>
                       <div>
                         <label htmlFor="password">Password</label>
-                        <input onChange={handlePassword} id="password" type="password" name="password" value={credentials.password}/>
+                        <input onChange={handlePassword} id="password" required type="password" name="password" value={credentials.password}/>
                       </div>
                       <div className="remind">
                         <span><Checkbox checked={true} /> Remember me</span>
@@ -86,11 +88,9 @@ const Login = props => {
                           <Link to="/account/reset/password">Forgot Password?</Link>
                         </span>
                       </div>
+
                       <div>
-                        <Captcha siteKey="6LepQp4eAAAAABItWahWXEOTDkiFYmTkJ2PpDd2o" onResponse={showResponse} />
-                      </div>
-                      <div>
-                        <Button label="Log In"  className="loginBtn" />
+                        <Button icon="pi pi-sign-in" iconPos="left" loading={loader} loadingIcon="pi pi-sun" label="Log In"  className="loginBtn" />
                       </div>
 
                       <div>

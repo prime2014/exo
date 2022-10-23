@@ -7,6 +7,7 @@ load="true"
 
 
 
+
 check_database(){
 
     scan=`pg_isready -d ${POSTGRES_DB} -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER} 1>/dev/null`

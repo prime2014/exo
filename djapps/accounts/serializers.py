@@ -42,6 +42,9 @@ class LoginSerializer(ModelSerializer):
 
 
 class UserSerializer(DynamicFieldsModelSerializer):
+    # password = serializers.CharField(style={"input_type": "password"}, required=False)
+    friends = serializers.SerializerMethodField(method_name="compute_number_of_friends")
+    is_friend = serializers.SerializerMethodField(method_name="check_friend_status")
 
     class Meta:
         model = User
@@ -56,13 +59,18 @@ class UserSerializer(DynamicFieldsModelSerializer):
             "is_active",
             "is_staff",
             "is_superuser",
-            "meta"
+            "meta",
+            "friends",
+            "is_friend"
         )
         extra_kwargs = {
-            "password": {"write_only": True},
+            "password": {"write_only": True, "required": False},
             "is_superuser": {"write_only": True},
             "is_staff": {"write_only": True},
         }
+
+    def compute_number_of_friends(self, instance):
+        return instance.friends
 
     def validate_password(self, password):
         if len(password) < 8:
@@ -84,7 +92,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
         instance.is_active = validated_data.get("is_active", instance.is_active)
         instance.is_staff = validated_data.get("is_staff", instance.is_staff)
         instance.is_superuser = validated_data.get("is_superuser", instance.is_superuser)
-        password = validated_data.get("password")
+        password = validated_data.get("password", None)
         instance.meta = validated_data.get("meta", instance.meta)
         if password:
             instance.password = make_password(password)
@@ -92,6 +100,39 @@ class UserSerializer(DynamicFieldsModelSerializer):
             instance.password = instance.password
         instance.save()
         return instance
+
+    def check_friend_status(self, obj):
+        request = self.context.get("request")
+        my_friend = obj.relation.filter(to_user__status="Friends", to_user__to_person=request.user.id)
+        exists = my_friend.exists()
+        return exists
+
+
+class LoggedInUser(DynamicFieldsModelSerializer):
+    class Meta(UserSerializer.Meta):
+        model = User
+        fields = (
+            "pk",
+            "email",
+            "username",
+            "password",
+            "avatar",
+            "first_name",
+            "last_name",
+            "is_active",
+            "meta",
+        )
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "is_superuser": {"write_only": True},
+            "is_staff": {"write_only": True},
+        }
+
+    def create(self, validated_data):
+        user = self.Meta.model.objects.create_user(**validated_data)
+        if user:
+            Token.objects.create(user=user)
+        return user
 
 
 class ProfileImageSerializer(ModelSerializer):

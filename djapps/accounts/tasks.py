@@ -23,7 +23,7 @@ def send_activation_link(token, user):
     send_mail(
         "Account Activation",
         msg_html,
-        from_email=settings.DEFAULT_FROM_EMAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL if settings.DEFAULT_FROM_EMAIL else settings.EMAIL_HOST_USER,
         recipient_list=[email],
         html_message=msg_html
     )

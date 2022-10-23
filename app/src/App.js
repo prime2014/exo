@@ -5,7 +5,9 @@ import Feed from "./Components/Feed/Feed";
 import Signup from "./Components/Signup/Signup";
 import Activation from "./Components/activation/Activation";
 import Profile from "./Components/Profile/Profile";
-import Friends from "./Components/friends/Friends";
+import Settings from "./Components/Settings/Settings";
+import Group from "./Components/group/Group";
+
 
 
 function App() {
@@ -18,8 +20,9 @@ function App() {
           <Route exact path="/feed" element={ <Feed /> } />
           <Route path="/account/signup" element= { <Signup /> } />
           <Route path="/account/:id/activation/:token" element={ <Activation /> } />
-          <Route path="/:username" element={ <Profile /> } />
-          <Route exact path="/friends" element = {<Friends />} />
+          <Route exact path="/:username" element={ <Profile /> } />
+          <Route path="/:pk/settings" element={ <Settings /> } />
+          <Route path="/groups" element={<Group />} />
         </Routes>
       </BrowserRouter>
     </div>

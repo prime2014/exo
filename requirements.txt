@@ -54,7 +54,7 @@ h11==0.13.0
 hiredis==2.0.0
 hyperlink==21.0.0
 idna==3.3
-imageio==2.21.1
+imageio==2.22.3
 imageio-ffmpeg==0.4.7
 incremental==21.3.0
 iniconfig==1.1.1

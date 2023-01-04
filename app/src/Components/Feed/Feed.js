@@ -73,7 +73,7 @@ class Feed extends Component {
     }
 
 
-    let events = new EventSource(`http://127.0.0.1:8000/events/?channel=user-${this.props.user.pk}`, {
+    let events = new EventSource(`http://35.81.9.144:8000/events/?channel=user-${this.props.user.pk}`, {
       headers: {
         "Authorization": `Token ${this.props.user.token}`
       }
@@ -136,7 +136,11 @@ class Feed extends Component {
   }
 
   handlePostSubmit = async event => {
-
+    //! This is a critical comment
+    // TODO: This is a todo comment
+    //? This is a question comment
+    //* This highlight comment
+    // This is a normal comment
     let { file, post } = this.state;
     let data_array =[]
 

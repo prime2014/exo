@@ -28,14 +28,24 @@ import Footer from "../../Common/Footer";
 
 
 class Home extends React.Component {
-
+    constructor(props){
+      super(props);
+      this.state = {
+        login:false,
+        signup:false
+      }
+    }
 
     goToSignup = event => {
-      return <Navigate to={"/account/signup"} />;
+      this.setState({
+        signup: true
+      })
     }
 
     goTologin = event => {
-      return <Navigate to={"/account/login"} />
+      this.setState({
+        login:true
+      })
     }
 
 
@@ -51,12 +61,15 @@ class Home extends React.Component {
 
                      <TweenOne className="bannerTextContent"
                         animation={{ y: 120, opacity: 0, type: 'from', delay: 800 }}
+                        style={{ width:"70%", padding:"10px", marginLeft:"60px" }}
                      >
-                        <h1 style={{ color:"#fff" }}>Get On Board</h1>
+                        <h1 style={{ color:"#fff", fontSize:"5vw" }}>Get On Board</h1>
 
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam assumenda ea quo cupiditate facere deleniti fuga officia</p>
                        <div className="actionBtns">
                          <button onClick={this.goToSignup}>SIGN UP</button>
+                         {this.state.login ? <Navigate to="/account/login" /> : null}
+                         {this.state.signup ? <Navigate to="/account/signup" /> : null}
                          <button onClick={this.goTologin}>LOGIN</button>
                        </div>
                        </TweenOne>

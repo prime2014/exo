@@ -26,7 +26,7 @@ const Navbar  = (props) => {
   const [selected, setSelected] = useState(null)
   const [searchResults, setSearchResults] = useState([])
   const [searchOutput, setSearchOutput] = useState("")
-  const [setNotifyLoader] = useState(false)
+  const [notifyLoader ,setNotifyLoader] = useState(false)
   const [sidebar, setSidebar] = useState(false);
   // const match = useMatch("/:username")
   const location = useLocation();

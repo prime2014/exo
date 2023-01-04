@@ -4,12 +4,25 @@ volumes:
   local_db: {}
 
 services:
+  nginx:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./utils/nginx/Dockerfile
+    image: local_nginx_image
+    container_name: exo_local_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - exo-net
+
   postgres:
     restart: on-failure
     image: postgres:12
     container_name: exo_local_postgres
     env_file:
-      - ./.env
+      - ./.env.production
     volumes:
       - local_db:/var/lib/postgresql/data
     networks:
@@ -25,7 +38,7 @@ services:
     volumes:
       - .:/exo
     env_file:
-      - ./.env
+      - ./.env.production
     command: >
       /bin/bash -c "python manage.py makemigrations
                     python manage.py migrate

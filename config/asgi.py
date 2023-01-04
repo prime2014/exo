@@ -9,7 +9,8 @@ from django.urls import re_path
 import django_eventstream
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.base')
+environ = os.environ.get("ENV_STATE", "base")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", f"config.settings.{environ}")
 
 django_asgi_app = get_asgi_application()
 

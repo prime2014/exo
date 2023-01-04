@@ -364,8 +364,9 @@ class Feed extends Component {
     // console.log(this)
     window.onscroll = debounce(()=>{
       let measuredHeight = Math.floor(window.innerHeight + document.documentElement.scrollTop);
+      let url = this.props.next.replace("http", "https")
 
-      if(Math.ceil(measuredHeight) === document.documentElement.scrollHeight && this.props.next){
+      if(Math.ceil(measuredHeight) === document.documentElement.scrollHeight && url){
           this.props.fetchNextBatch(this.props.next);
       }
     }, 100);

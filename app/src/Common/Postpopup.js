@@ -25,6 +25,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloseIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import cookie from "react-cookies";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -84,7 +85,8 @@ const PostPopup = props => {
     await axios.post(process.env.REACT_APP_API_URL + "/feeds/api/v1/post/media/", content, {
       headers : {
         "Content-Type": "multipart/form-data",
-        "authorization": `Token ${store.getState().userReducer.token}`
+        "authorization": `Token ${store.getState().userReducer.token}`,
+        "X-CSRFToken" : cookie.load("csrftoken")
       }
     }).then(resp=>{
 

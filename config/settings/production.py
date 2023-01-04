@@ -1,9 +1,13 @@
 from .base import *  # noqa
-from .base import env
+from .base import environ
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+env = environ.Env()
+
+environ.Env.read_env(str(BASE_DIR / ".env.production"))
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "django"]
 
 SECRET_KEY = env("SECRET_KEY")
 

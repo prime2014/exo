@@ -159,7 +159,7 @@ const Notifications = props => {
       return (
         <li key={item.id} onClick={(event)=>openNotification(event,item)} className="notifyTip">
           <span className="notifySpace">
-            <img loading="lazy" className="notifyImg" src={item.data.user.avatar} width={60} height={60} alt="notify-img" />
+            <img loading="lazy" className="notifyImg" src={item.data && item.data.user.avatar} width={60} height={60} alt="notify-img" />
             <span><IoNotifications className="nIcon" /></span>
           </span>
           <span style={item.unread == true ? { fontWeight: 600 } : { color: "#D5D7DA"}}>{item.description}</span>

@@ -9,7 +9,7 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { uploadProfile } from "../redux/actions";
 import  toast from "react-hot-toast";
-
+import cookie from "react-cookies";
 
 
 const ProfileUpload = (props) => {
@@ -31,14 +31,15 @@ const ProfileUpload = (props) => {
     axios.post(process.env.REACT_APP_API_URL + "/accounts/api/v1/profileimages/", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        "authorization": `Token ${store.getState().userReducer.token}`
+        "authorization": `Token ${store.getState().userReducer.token}`,
+        "X-CSRFToken": cookie.load("csrftoken")
       }
     }).then(resp=>{
       setLoader(false)
       toast.success("The image was successfully uploaded")
       props.uploadProfile(resp.data)
       props.update(resp.data)
-    }).error(err=> {
+    }).catch(err=> {
       setLoader(false)
       toast.error("There was a problem uploading your profile image")
       closeModal()

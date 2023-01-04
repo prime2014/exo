@@ -1,0 +1,7 @@
+*/**/node_modules
+insights
+media
+rod
+server
+.pytest_cache
+__pycache__/

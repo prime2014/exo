@@ -7,7 +7,7 @@ env = environ.Env()
 
 environ.Env.read_env(str(BASE_DIR / ".env.production"))
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "django"]
+ALLOWED_HOSTS = ["35.81.9.144", "127.0.0.1", "localhost", "django"]
 
 SECRET_KEY = env("SECRET_KEY")
 

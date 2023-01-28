@@ -34,22 +34,37 @@ You must have ***python*** installed in your system and ***node*** as well
 
 ## File Structure
 ```
-├───.github
-├───djapps
-│   ├───accounts
-│   │   └───migrations
-│   ├───feeds
-│   │   └───migrations
-│   └───templates
-│       └───accounts
-├───config
-│   └───settings
-├───media
-│   └───avatar
-├───static
-│   └───images
-└───utils
-    └───django
+exo
+├── app <----- [frontend]
+│   ├── node_modules
+│   ├── public
+│   └── src
+├── config <------[django project directory]
+│   └── settings
+├── djapps <------[django apps]
+│   ├── accounts
+│   ├── events
+│   ├── feeds
+│   └── templates
+├── docs
+├── insights
+│   ├── bulk_operation
+│   ├── dropbox
+│   ├── profiler_logs
+│   └── rsnaps
+├── media
+│   ├── __sized__
+│   ├── avatar
+│   ├── content
+│   └── profile
+├── rod
+├── server
+├── static
+│   └── images
+└── utils
+    ├── django
+    ├── nginx
+    └── react
 ```
 
 ## Building the project with docker

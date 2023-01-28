@@ -71,10 +71,6 @@ services:
         --loadmodule /usr/lib/redis/modules/redisbloom.so
         --loadmodule /usr/lib/redis/modules/redisgears.so Plugin /var/opt/redislabs/modules/rg/plugin/gears_python.so
         --save 10800 1
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
     networks:
       - exo-net
 

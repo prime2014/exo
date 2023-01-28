@@ -74,3 +74,4 @@ jobs:
 
         run: |
           docker-compose -f staging.yml run --rm django pytest
+

@@ -29,7 +29,6 @@ from django.contrib.auth import logout
 from notifications.signals import notify
 from django.db.models import Q, Count
 from rest_framework.parsers import MultiPartParser, FormParser
-from notifications_rest import serializers
 
 
 User = get_user_model()

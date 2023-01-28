@@ -1,4 +1,5 @@
 from .base import *  # noqa
+from .base import BASE_DIR
 from .base import environ
 
 DEBUG = False

@@ -17,7 +17,7 @@ STATICFILES_DIRS = [
     Path.joinpath(BASE_DIR, "static"),
 ]
 
-STATIC_ROOT = Path.joinpath(BASE_DIR, "static")
+STATIC_ROOT = Path.joinpath(BASE_DIR, "/home/ubuntu/static")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env("EMAIL_HOST")

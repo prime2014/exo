@@ -185,8 +185,8 @@ const Navbar  = (props) => {
           <ul className="leftMenuTab">
             <li className="menuList" style={{ verticalAlign:"middle", display:"inline-flex", justifyContent:"center", alignItems:"center" }}>
               <span onMouseDown={handlePress} onMouseUp={handleRelease} onClick={goToProfile} className={"cloned"}>
-                <Avatar style={{ zIndex:99, objectFit:"cover" }} src={props.user.avatar} alt="profile" size={26} />{" "}
-                  <span className="nameBar">{props.user.first_name}</span>
+                <Avatar style={{ zIndex:99, objectFit:"cover" }} src={props.user ? props.user.avatar : null} alt="profile" size={26} />{" "}
+                  <span className="nameBar">{props.user ? props.user.first_name : null}</span>
               </span>
             </li>
             {!matches ? <><li className="gridMenu">

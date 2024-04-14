@@ -90,20 +90,24 @@ const Profile = props => {
     let id = parseInt(username.split("-").pop())
     window.scrollTo(0, 0);
     setProfileLoader(true)
+    if(!Object.keys(props?.user ?? {}).length) {
+      navigate("/")
+      return
+    }
     accountsApi.getUserProfile(id).then(async resp=>{
       console.log("THIS PROFILE: ", resp)
       if(resp.pk){
         setProfileLoader(false)
         setProfile(resp);
       } else {
-        throw "The account associated with this profile page was not found."
+        navigate("/")
       }
 
     }).catch(error=> {
       setProfileLoader(false)
       console.log(error);
       toast.error(error)
-      navigate("/feed")
+      navigate("/")
     });
 
   },[props.user, username])
@@ -295,8 +299,8 @@ const Profile = props => {
               <div className="bannerCoverPhoto">
                 <div className="coverImagery" style={{ backgroundImage:`url(${Banner})`, backgroundSize:"cover", backroundRepeat:"no-repeat" }}>
                   <div className="profileEmbed">
-                      <Avatar style={{ border:"7px solid #fff", boxShadow:"2px 2px 5px #444", zIndex:99 }} src={profile.avatar} alt="profile" size={170} />
-                      {parseInt(username.split("-").pop()) === props.user.pk ?
+                      <Avatar style={{ border:"7px solid #fff", boxShadow:"2px 2px 5px #444", zIndex:99 }} src={Object.keys(profile).length ? profile.avatar : null} alt="profile" size={170} />
+                      {parseInt(username.split("-").pop()) === props?.user?.pk ?
                       <div onClick={()=>setDisplayModal(true)} className="eduprof">
                           <AddAPhotoIcon style={{ fontSize:"25px" }} />
                       </div> : null}
@@ -318,13 +322,13 @@ const Profile = props => {
                         }
                       </div>
                       <div className="flex mb-1" style={{ display:"flex", alignItems:"center", minWidth:"100px" }}>
-                        {profileLoader === true ? <>
+                        {profileLoader === true ?
                           <Skeleton shape="rectangle" width="100%" height="40px" className="skele-name"></Skeleton>
-                        </> : <>
-                        {(profile.pk !== props.user.pk) && (profile && profile.is_friend === false) && (Object.keys(profile).length && Object.keys(profile.meta).length && !profile.meta.requests.includes(parseInt(props.user.pk))) &&  !props.user.meta.requests.includes(profile.pk) &&
+                        : <>
+                        {(profile?.pk !== props?.user?.pk) && (profile && profile.is_friend === false) && (Object.keys(profile).length && Object.keys(profile.meta).length && !profile.meta.requests.includes(parseInt(props?.user?.pk))) &&  !props?.user?.meta?.requests?.includes(profile.pk) &&
                         <Button loading={requestFriend} loadingIcon={"pi pi-sun"} onClick={sendFriendReuqest} label={"Add Friend"} icon="pi pi-user-plus" />}
                         {(profile.is_friend === true) && <Button onClick={unfriend} loading={deleteLoader} loadingIcon={"pi pi-sun"} label={"Unfriend"} icon="pi pi-user-minus" style={{ background:"#BD2031", color:"#fff" }} />}
-                        {(props.user.pk !== profile.pk) && (Object.keys(profile).length && Object.keys(profile.meta).length && profile.meta.requests.includes(parseInt(props.user.pk))) && (profile && profile.is_friend === false) && <SplitButton loading={requestFriend} loadingIcon={"pi pi-sun"} label="Friend Request Sent" icon={<BiEnvelope style={{margin:"0 3px"}}/>} iconPos="left"  model={items}></SplitButton>}
+                        {(props?.user?.pk !== profile?.pk) && (Object.keys(profile).length && Object.keys(profile.meta).length && profile?.meta?.requests?.includes(parseInt(props?.user?.pk))) && (profile && profile?.is_friend === false) && <SplitButton loading={requestFriend} loadingIcon={"pi pi-sun"} label="Friend Request Sent" icon={<BiEnvelope style={{margin:"0 3px"}}/>} iconPos="left"  model={items}></SplitButton>}
                         </>}
                       </div>
                     </div>

@@ -19,8 +19,8 @@ const PostFeed = props => {
     <React.Fragment>
     <form encType="multipart/form-data" className="postFeedSection">
         <div className="postInput">
-          <Avatar className="avatar" src={props.user.avatar} size={45} />
-          <input onClick={openUploadModal} className="inputText" type="text" name="post" placeholder={`What's on your mind, ${props.user.first_name}`} />
+          <Avatar className="avatar" src={props.user ? props.user.avatar : null} size={45} />
+          <input onClick={openUploadModal} className="inputText" type="text" name="post" placeholder={`What's on your mind, ${props.user ? props.user.first_name : null}`} />
         </div>
         <div className="postIcons">
           <div className="iconBBtns">

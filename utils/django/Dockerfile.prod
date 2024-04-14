@@ -34,6 +34,6 @@ RUN python -m pip install --upgrade pip  \
 COPY --chown=1000:1000 . /exo/
 
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+# ENTRYPOINT [ "./entrypoint.sh" ]
 
 USER 1000

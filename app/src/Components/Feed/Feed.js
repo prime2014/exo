@@ -67,15 +67,17 @@ class Feed extends Component {
 
 
   componentDidMount(){
-
+    if(!Object.keys(this?.props?.user ?? {}).length) {
+      return <Navigate to="/" />
+    }
     if('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices){
       console.log("LET'S GET THIS PARTY STARTED");
     }
 
 
-    let events = new EventSource(`http://35.81.9.144:8000/events/?channel=user-${this.props.user.pk}`, {
+    let events = new EventSource(`${process.env.REACT_APP_API_URL}/events/?channel=user-${this.props?.user?.pk}`, {
       headers: {
-        "Authorization": `Token ${this.props.user.token}`
+        "Authorization": `Token ${this.props?.user?.token}`
       }
     })
 
@@ -368,7 +370,8 @@ class Feed extends Component {
     // console.log(this)
     window.onscroll = debounce(()=>{
       let measuredHeight = Math.floor(window.innerHeight + document.documentElement.scrollTop);
-      let url = this.props.next.replace("http", "https")
+      console.log(this.props)
+      let url = this.props.next ? this.props.next.replace("http", "https") : null;
 
       if(Math.ceil(measuredHeight) === document.documentElement.scrollHeight && url){
           this.props.fetchNextBatch(this.props.next);
@@ -383,7 +386,7 @@ class Feed extends Component {
     return(
       <section style={{ position:"relative" }}>
           <Toaster />
-          {Object.keys(this.props.user).length ? null : <Navigate to="/" />}
+          {Object.keys(this.props.user ?? {}).length ? null : <Navigate to="/" />}
           {this.state.create_post && <Postpopup openSuccess={this.openSuccessAlert} close={this.closePostModal} />}
           <Navbar>
               <Snackbar open={this.state.success} autoHideDuration={6000} onClose={this.closeAlert}>
@@ -397,10 +400,10 @@ class Feed extends Component {
                 <Col xs={0} sm={24} md={7} lg={7} xl={7} className="firstCol">
                     <div className="leftAside">
                     <div className="profileBio" style={{ background:`url(${Cover})`, backgroundSize:"cover", backgroundRepeat:"no-repeat" }}>
-                      <Avatar style={{ border:"7px solid #fff", boxShadow:"2px 2px 5px #444", marginTop:"-15px", marginRight:"-5px", zIndex:99 }} src={this.props.user.avatar} alt="profile" size={80} />
+                      <Avatar style={{ border:"7px solid #fff", boxShadow:"2px 2px 5px #444", marginTop:"-15px", marginRight:"-5px", zIndex:99 }} src={this.props.user ? this.props.user.avatar : null} alt="profile" size={80} />
 
                       <div className="profName">
-                         <h3>{this.props.user.first_name} {this.props.user.last_name}</h3>
+                         <h3>{this.props.user ? `${this.props.user.first_name} ${this.props.user.last_name}` : null}</h3>
                          <h4>1269 followers</h4>
                       </div>
                     </div>

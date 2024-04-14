@@ -26,6 +26,7 @@ const Suggestions = props => {
   useEffect(()=>{
     setLoader(true)
     accountsApi.getUsers().then(resp=> {
+      console.log(resp)
       setLoader(false)
       setUsers(resp);
     })

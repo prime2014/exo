@@ -83,11 +83,11 @@ const Settings = props => {
 
   useLayoutEffect(()=>{
     setCredentials({
-      first_name: props.user.first_name,
-      last_name: props.user.last_name,
-      avatar: props.user.avatar,
-      username: props.user.username,
-      email: props.user.email
+      first_name: props?.user?.first_name,
+      last_name: props?.user?.last_name,
+      avatar: props?.user?.avatar,
+      username: props?.user?.username,
+      email: props?.user?.email
     })
   },[props])
 
@@ -135,8 +135,8 @@ const Settings = props => {
         <Layout>
         {!matches ? <Sider width={350} className="settings_layout">
             <div className="img-wrapped">
-              <img src={props.user.avatar} className="profile_image_settings" alt="profile_image"/>
-              <p style={{ textAlign:"center", fontSize:23, fontWeight:"bold" }}>{props.user.first_name} {props.user.last_name}</p>
+              <img src={props.user ? props.user.avatar : null} className="profile_image_settings" alt="profile_image"/>
+              <p style={{ textAlign:"center", fontSize:23, fontWeight:"bold" }}>{props.user ? `${props.user.first_name} ${props.user.last_name}` : null}</p>
             </div>
         </Sider> : null}
         <Content>

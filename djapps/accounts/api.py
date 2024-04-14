@@ -29,6 +29,7 @@ from django.contrib.auth import logout
 from notifications.signals import notify
 from django.db.models import Q, Count
 from rest_framework.parsers import MultiPartParser, FormParser
+import json
 
 
 User = get_user_model()
@@ -72,7 +73,7 @@ class LogoutAPIView(APIView):
 
 class SuggestionsRequest(ModelViewSet):
     queryset = User.objects.annotate(friends=Count("relation"))
-    authentication_classes = (authentication.SessionAuthentication, authentication.TokenAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
@@ -94,7 +95,7 @@ class SuggestionsRequest(ModelViewSet):
 
 class UserViewset(ModelViewSet):
     queryset = User.objects.annotate(friends=Count("relation"))
-    authentication_classes = (authentication.SessionAuthentication, authentication.TokenAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
@@ -147,7 +148,10 @@ class UserViewset(ModelViewSet):
                                                context={"request": request})
             request_user = User.objects.filter(id=request.user.id).annotate(friends=Count("relation"))[0]
             requester = self.serializer_class(instance=request_user, context={"request": request})
-
+            logger.info("THE REQUESTER: \n")
+            logger.info(requester.data)
+            logger.info("\n")
+            logger.info(type(requester.data))
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 notify.send(sender=request.user,

@@ -11,3 +11,7 @@ insights/
 rod/
 media/
 static/
+*.pem
+*.key
+**laytext.pem
+**laytext.key

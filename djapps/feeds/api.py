@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 
 class PostMedia(APIView):
     parser_classes = (FormParser, MultiPartParser)
-    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -122,7 +122,7 @@ class TagsViewset(ModelViewSet):
 
 class MediaViewset(ModelViewSet):
     queryset = Media.objects.all()
-    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = (permissions.IsAuthenticated, )
     serializer_class = MediaSerializer
@@ -166,7 +166,7 @@ class MediaViewset(ModelViewSet):
 
 class FeedGenericAPIView(ListAPIView):
     serializer_class = FeedSerializer
-    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, )
     pagination_class = FeedCursorPagination
     lookup_url_kwargs = "pk"
@@ -218,7 +218,7 @@ class FeedAPIViewWrite(ListCreateAPIView, FeedGenericAPIView):
 class FeedAPIDetail(RetrieveUpdateDestroyAPIView, FeedGenericAPIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
     serializer_class = FeedSerializer
-    authentication_classes = (authentication.TokenAuthentication, authentication.SessionAuthentication)
+    authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, )
 
     def retrieve(self, request, *args, **kwargs):

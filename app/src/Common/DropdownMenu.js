@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { accountsApi } from "../services/accounts/accounts.service";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import { logoutUser } from "../redux/actions";
+import { logoutUser, clearFeed, clearNotifications } from "../redux/actions";
 
 
 const DropdownMenu = props => {
@@ -20,12 +20,15 @@ const DropdownMenu = props => {
     toast.promise(accountsApi.logoutUserSession(), {
       loading: "Logging you out in a moment...",
       success: (data)=> {
+
         let { success } = data;
         if (success) {
           localStorage.clear()
           props.logoutUser();
+          props.clearFeed();
+          props.clearNotifications();
           navigate("/")
-          return "Logout was successful"
+          return "Logout successful";
         } else {
           throw "There was a problem with the operation!"
         }
@@ -54,9 +57,9 @@ const DropdownMenu = props => {
         <ul className="contextDrop">
           <li>
             <div className="submenuDrop">
-              <img className="profilePhoto" src={props.user.avatar} width={57} height={57} loading="lazy" alt="profile-photo" />
+              <img className="profilePhoto" src={props.user ? props.user.avatar : null} width={57} height={57} loading="lazy" alt="profile-photo" />
               <div>
-                <h3>{props.user.first_name} {props.user.last_name}</h3>
+                <h3>{props.user ? `${props.user.first_name} ${props.user.last_name}` : null}</h3>
                 <p>See your profile</p>
               </div>
             </div>
@@ -94,7 +97,9 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps  = {
-  logoutUser
+  logoutUser,
+  clearFeed,
+  clearNotifications
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DropdownMenu);

@@ -32,7 +32,7 @@ const DisplayNotifications = (props) => {
 
   const navigateToProfile = (event) => {
     event.stopPropagation()
-    navigate(`/${props.content.data.user.username}-${props.content.data.user.pk}`)
+    navigate(`/${props.content.user.username}-${props.content.user.pk}`)
   }
 
   const handleAddFriend = pk => {
@@ -99,8 +99,8 @@ const DisplayNotifications = (props) => {
           <DialogContentText>
           <div style={{ padding:"10px 0", display:"flex", justifyContent:"space-between" }}>
             <div style={{ display:"flex", alignItems:"center" }}>
-                <Avatar src={Object.keys(props.content).length && props.content.data.user.avatar} sx={{ width: 40, height: 40 }} alt="profile" />
-                <span style={{ padding:"0 5px", color:"#1a1a1d", fontSize:"14px", fontWeight:"bold" }}>{Object.keys(props.content).length && props.content.data.user.first_name} {Object.keys(props.content).length && props.content.data.user.last_name}</span>
+                <Avatar src={Object.keys(props.content).length && props.content.user.avatar} sx={{ width: 40, height: 40 }} alt="profile" />
+                <span style={{ padding:"0 5px", color:"#1a1a1d", fontSize:"14px", fontWeight:"bold" }}>{Object.keys(props.content).length && props.content.user.first_name} {Object.keys(props.content).length && props.content.user.last_name}</span>
             </div>
             <Button onClick={navigateToProfile} size="small" startIcon={<VisibilityIcon />}>
               View Profile
@@ -111,10 +111,10 @@ const DisplayNotifications = (props) => {
         </DialogContent>
         {Object.keys(props.content).length && props.content.verb === "Friend Request" ?
         <DialogActions>
-          {Object.keys(props.content).length && props.user.meta.requests.includes(props.content.data.user.pk) ?
+          {Object.keys(props.content).length && props.user.meta.requests.includes(props.content.user.pk) ?
           <>
-            <Button autoFocus onClick={()=>handleAddFriend(props.content.data.user.pk)}>Confirm</Button>
-            <Button onClick={()=> declineConnectionRequest(props.user, props.content.data.user.pk)}>
+            <Button autoFocus onClick={()=>handleAddFriend(props.content.user.pk)}>Confirm</Button>
+            <Button onClick={()=> declineConnectionRequest(props.user, props.content.user.pk)}>
               Delete Request
             </Button>
           </> : <Alert severity="info">This notification is inactive. It may be due to declining the connection request,or having this user as a friend</Alert>}
@@ -153,13 +153,19 @@ const Notifications = props => {
   };
 
   const listNotifications = () =>{
-     let data = props.notifications.map(item => {
+     let user = props.notifications.map(item=>{
+      if(typeof item.data == "object" && Object.keys(item?.data?.user).length) {
+        item.data.user = JSON.parse(item.data.user)
+      }
+      return item
+     })
+     let data = user.map(item => {
       let username = item.description.split(" ").pop()
-
+      console.log(item)
       return (
         <li key={item.id} onClick={(event)=>openNotification(event,item)} className="notifyTip">
           <span className="notifySpace">
-            <img loading="lazy" className="notifyImg" src={item.data && item.data.user.avatar} width={60} height={60} alt="notify-img" />
+            <img loading="lazy" className="notifyImg" src={item.user && item.user.avatar} width={60} height={60} alt="notify-img" />
             <span><IoNotifications className="nIcon" /></span>
           </span>
           <span style={item.unread == true ? { fontWeight: 600 } : { color: "#D5D7DA"}}>{item.description}</span>

@@ -64,6 +64,14 @@ export const feedReducer = (
   action
 ) => {
     switch(action.type){
+      case actionTypes.CLEAR_FEED:
+        state = {
+          feed: [],
+          count: 0,
+          next: "",
+          previous: ""
+        }
+        return state;
       case actionTypes.FETCH_FEED:
         state = {
           ...state,
@@ -192,6 +200,12 @@ export const notifications = (
         unread_count: state.unread_count - 1
       }
       console.log(state)
+      return state;
+    case actionTypes.CLEAR_NOTIFICATIONS:
+      state = {
+        notifications: [],
+        unread_count: 0
+      }
       return state;
     default:
       return state;

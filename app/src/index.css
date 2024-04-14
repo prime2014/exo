@@ -514,7 +514,7 @@ body {
   justify-content: center;
   align-items: center;
   background-color: rgb(58, 58, 61, .2);
-  z-index: 800;
+  z-index: 1200;
 }
 
 .popoo {
@@ -1113,7 +1113,7 @@ body {
   position:sticky;
   top: 0;
   left: 0;
-  z-index: 1200;
+  z-index: 1000;
   justify-content: space-between;
   align-items: center;
 }

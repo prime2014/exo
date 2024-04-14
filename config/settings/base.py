@@ -175,17 +175,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://35.81.9.144"
+    "http://laytext-ke.com"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://35.81.9.144"
+    "http://laytext-ke.com"
 ]
 
 GRIP_PROXIES = [
@@ -269,7 +265,7 @@ EMAIL_HOST = "mailhog"
 EMAIL_PORT = 1025
 
 EVENTSTREAM_STORAGE_CLASS = 'django_eventstream.storage.DjangoModelStorage'
-EVENTSTREAM_ALLOW_ORIGIN = 'http://localhost:3000'
+EVENTSTREAM_ALLOW_ORIGIN = 'http://laytext-ke.com'
 EVENTSTREAM_ALLOW_CREDENTIALS = True
 EVENTSTREAM_ALLOW_HEADERS = 'Authorization'
 

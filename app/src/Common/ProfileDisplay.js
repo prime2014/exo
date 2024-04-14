@@ -43,7 +43,7 @@ const ProfileDisplay = (props) => {
 
 
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     if(Object.values(props.profile).length){
       feedAPI.getProfilePosts(props.profile.pk).then(resp=>{
         setFeed(resp.results);
@@ -205,8 +205,8 @@ const ProfileDisplay = (props) => {
 
   let data = feed.length ? feed.map(item=> {
     return (
-      <div key={item.pk} className="postCard">
-        {item.tag.length && item.tag.find(user=> user.user.pk === props.user.pk) ?
+      <div key={item?.pk} className="postCard">
+        {item.tag.length && item.tag.find(user=> user?.user?.pk === props?.user?.pk) ?
           <div style={{ borderBottom:"1px solid #e6ecf5", padding:"5px 15px", marginBottom:"20px" }}>
             <span>You were tagged by <Link to={{ pathname: `/${item.author.username}-${item.author.pk}` }}>{item.author.first_name} {item.author.last_name}</Link></span>
           </div>: null}
@@ -226,8 +226,8 @@ const ProfileDisplay = (props) => {
               </span>
           </span>
           <span className="menuExpanding">
-            {props.user.pk === item.author.pk ? <span className="expand" id={item.id} onClick={openPostMenu}>&#8230;</span>: null}
-            <div className={menu === item.id ? "postMenuCard" : "hidePostMenu"}><PostMenu deletePost={handlePostDelete} updatePost={handlePostUpdate} post={item} closeMenu={closePostMenu} /></div>
+            {props?.user?.pk === item?.author?.pk ? <span className="expand" id={item?.id} onClick={openPostMenu}>&#8230;</span>: null}
+            <div className={menu === item?.id ? "postMenuCard" : "hidePostMenu"}><PostMenu deletePost={handlePostDelete} updatePost={handlePostUpdate} post={item} closeMenu={closePostMenu} /></div>
           </span>
         </div>
         <div className="postContent">
@@ -284,7 +284,7 @@ const ProfileDisplay = (props) => {
     )
   }) : (
     <div className="noFeedText">
-        {props.user.pk === props.profile.pk ? <h3>No item on your feed. Create your first post</h3> : <h3>This profile page does not have any posts</h3>}
+        {props?.user?.pk === props?.profile?.pk ? <h3>No item on your feed. Create your first post</h3> : <h3>This profile page does not have any posts</h3>}
         <IoNewspaperOutline style={{ fontSize:"30px" }}/>
     </div>
   );

@@ -31,9 +31,13 @@ RUN python -m pip install --upgrade pip  \
     && useradd -ms /bin/bash 1000 \
     && echo "1000:1000" | chpasswd && adduser 1000 sudo
 
-COPY --chown=1000:1000 . /exo/
+COPY --chown=1000:1000 . /exo
 
+COPY ./entrypoint.sh /exo
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+RUN chmod +x ./entrypoint.sh
 
 USER 1000
+
+
+# ENTRYPOINT [ "./entrypoint.sh" ]

@@ -14,8 +14,9 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    networks:
-      - exo-net
+    volumes:
+      - ./ssl_certificates:/etc/nginx/ssl
+    network_mode: host
 
   postgres:
     restart: on-failure
@@ -25,8 +26,7 @@ services:
       - ./.env.production
     volumes:
       - local_db:/var/lib/postgresql/data
-    networks:
-      - exo-net
+    network_mode: host
 
   django: &django
     restart: on-failure
@@ -47,8 +47,7 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
-    networks:
-      - exo-net
+    network_mode: host
 
   redisModules:
     image: "redislabs/redismod"
@@ -71,8 +70,7 @@ services:
         --loadmodule /usr/lib/redis/modules/redisbloom.so
         --loadmodule /usr/lib/redis/modules/redisgears.so Plugin /var/opt/redislabs/modules/rg/plugin/gears_python.so
         --save 10800 1
-    networks:
-      - exo-net
+    network_mode: host
 
   celery:
     <<: *django
@@ -86,9 +84,5 @@ services:
     depends_on:
       - postgres
       - redisModules
-    networks:
-      - exo-net
+    network_mode: host
 
-networks:
-  exo-net:
-    driver: bridge

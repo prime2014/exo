@@ -27,6 +27,9 @@ COPY ./utils/nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY ./utils/nginx/my_nginx.conf /etc/nginx/sites-available/
 
+COPY ./ssl_certificates/laytext.pem /etc/nginx/ssl/laytext.pem
+COPY ./ssl_certificates/laytext.key /etc/nginx/ssl/laytext.key
+
 RUN ln -s /etc/nginx/sites-available/my_nginx.conf /etc/nginx/sites-enabled/
 
 CMD ["nginx", "-g", "daemon off;"]

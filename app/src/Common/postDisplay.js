@@ -216,7 +216,7 @@ const PostDisplay = (props) => {
     return (
       <React.Fragment>
       <div key={item.id} className="postCard">
-        {item.tag.length && item.tag.find(user=> user.user.pk === props.user.pk) ?
+        {item.tag.length && item.tag.find(user=> user?.user?.pk === props?.user?.pk) ?
           <div style={{ borderBottom:"1px solid #e6ecf5", padding:"5px 15px", marginBottom:"20px" }}>
             <span>You were tagged by <Link to={{ pathname: `/${item.author.username}-${item.author.pk}` }}>{item.author.first_name} {item.author.last_name}</Link></span>
           </div>: null}
@@ -236,7 +236,7 @@ const PostDisplay = (props) => {
               </span>
           </span>
           <span className="menuExpanding">
-            {props.user.pk === item.author.pk ? <span className="expand" id={item.id} onClick={openPostMenu}>&#8230;</span>: null}
+            {props?.user?.pk === item?.author?.pk ? <span className="expand" id={item.id} onClick={openPostMenu}>&#8230;</span>: null}
             <div className={menu === item.id ? "postMenuCard" : "hidePostMenu"}><PostMenu post={item} closeMenu={closePostMenu} /></div>
           </span>
         </div>
@@ -271,7 +271,7 @@ const PostDisplay = (props) => {
           </div>
         </div>
         <form ref={submitRef} className="commentSection">
-          <img src={props.user.avatar} alt="profile_photo" style={{ width: "40px", height:"40px", borderRadius:"50%" }}/>
+          <img src={props?.user?.avatar} alt="profile_photo" style={{ width: "40px", height:"40px", borderRadius:"50%" }}/>
           <div className="textareaWrap">
             <textarea ref={textareaRef} className="commentSections" onInput={(event)=>createComment(event, item.id)} cols={60} rows={8} placeholder="Write a comment..." name="comment">
             </textarea>

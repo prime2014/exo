@@ -124,3 +124,16 @@ export const logoutUser = () =>{
     type: actionTypes.LOGOUT_USER
   }
 }
+
+
+export const clearFeed = () => {
+  return {
+    type: actionTypes.CLEAR_FEED
+  }
+}
+
+export const clearNotifications = () => {
+  return {
+    type: actionTypes.CLEAR_NOTIFICATIONS
+  }
+}
